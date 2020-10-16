@@ -1,0 +1,24 @@
+{
+    "template": "https://github.com/bird-house/cookiecutter-birdhouse.git",
+    "commit": "be4eeb281ac2a027c2128c4ef84894ba559c8c24",
+    "context": {
+        "cookiecutter": {
+            "full_name": "Ag Stephens",
+            "email": "ag.stephens@stfc.ac.uk",
+            "github_username": "cedadev",
+            "project_name": "goldfinch",
+            "project_slug": "goldfinch",
+            "project_repo_name": "goldfinch",
+            "project_readthedocs_name": "goldfinch",
+            "project_short_description": "A WPS which supports foltering and extraction of MIDAS data.",
+            "version": "0.1.0",
+            "open_source_license": "BSD license",
+            "http_port": "5000",
+            "_copy_without_render": [
+                "{{cookiecutter.project_slug}}/templates/*.cfg"
+            ],
+            "_template": "https://github.com/bird-house/cookiecutter-birdhouse.git"
+        }
+    },
+    "directory": null
+}
