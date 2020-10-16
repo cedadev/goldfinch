@@ -21,7 +21,7 @@ goldfinch
 goldfinch (the bird)
   *goldfinch is a bird ...*
 
-A WPS which supports foltering and extraction of MIDAS data.
+A WPS which supports filtering and extraction of MIDAS data.
 
 Documentation
 -------------
