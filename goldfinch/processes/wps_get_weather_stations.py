@@ -1,0 +1,96 @@
+import os.path
+
+from pywps import Process, LiteralInput, ComplexOutput, BoundingBoxInput
+from pywps import FORMATS
+
+from pywps.app.Common import Metadata
+
+from goldfinch.util import get_station_list, validate_inputs
+
+import logging
+LOGGER = logging.getLogger("PYWPS")
+
+
+class GetWeatherStations(Process):
+    """A process getting UK weather stations."""
+    def __init__(self):
+        inputs = [
+            LiteralInput('start', 'Start Date Time',
+                         abstract='The first date/time for which to search for operating weather stations.',
+                         data_type='dateTime',
+                         default='2017-10-01T12:00:00Z'),
+            LiteralInput('end', 'End Date Time',
+                         abstract='The last date/time for which to search for operating weather stations.',
+                         data_type='dateTime',
+                         default='2018-02-25T12:00:00Z'),
+            # BoundingBoxInput('bbox', 'Bounding Box',
+            #                  abstract='The spatial bounding box within which to search for weather stations.'
+            #                           ' This input will be ignored if counties are provided.',
+            #                  crss=['epsg:4326', 'epsg:3035'],
+            #                  min_occurs=0),
+            LiteralInput('bbox', 'Bounding Box',
+                         abstract='The spatial bounding box within which to search for weather stations.'
+                         ' This input will be ignored if counties are provided.'
+                         ' Provide the bounding box as: "W,S,E,N".',
+                         data_type='string',
+                         min_occurs=0,
+                         max_occurs=1),
+            LiteralInput('counties', 'Counties',
+                         abstract='A list of counties within which to search for weather stations.',
+                         data_type='string',
+                         min_occurs=0),
+            LiteralInput('datatypes', 'Data Types',
+                         data_type='string',
+                         min_occurs=0),
+        ]
+        outputs = [
+            ComplexOutput('output', 'Output',
+                          abstract='Station list.',
+                          as_reference=True,
+                          supported_formats=[FORMATS.TEXT])]
+
+        super(GetWeatherStations, self).__init__(
+            self._handler,
+            identifier='GetWeatherStations',
+            title='Get Weather Stations',
+            abstract='The "GetWeatherStations" process allows the user to identify'
+                     ' a set of Weather Station numeric IDs.'
+                     ' These can be selected using temporal and spatial filters'
+                     ' to derive a list of stations'
+                     ' that the user is interested in. The output is a text file '
+                     ' containing one station ID per line.'
+                     ' Please see the disclaimer.',
+            keywords=['stations', 'uk', 'demo', 'weather', 'observations'],
+            metadata=[
+                Metadata('User Guide', 'https://goldfinch.readthedocs.io'),
+                Metadata('Disclaimer' 'https://help.ceda.ac.uk/article/4642-disclaimer')
+            ],
+            version='1.0',
+            inputs=inputs,
+            outputs=outputs,
+            store_supported=True,
+            status_supported=True
+        )
+
+    def _handler(self, request, response):
+        # Now set status to started
+        response.update_status('Job is now running', 0)
+ 
+        inputs = validate_inputs(request.inputs)
+
+        # Add output file
+        stations_file = os.path.join(self.workdir, 'weather_stations.txt')
+
+        get_station_list(
+            counties=inputs['counties'],
+            bbox=inputs['bbox'],
+            data_types=inputs['datatypes'],
+            start_time=inputs['start'],
+            end_time=inputs['end'],
+            output_file=stations_file)
+
+        # We can log information at any time to the main log file
+        LOGGER.info(f'Written output file: {stations_file}')
+
+        response.outputs['output'].file = stations_file
+        return response
