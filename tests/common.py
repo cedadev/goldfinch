@@ -1,6 +1,6 @@
-from pywps import get_ElementMakerForVersion
+from pywps import get_ElementMakerForVersion, Service
 from pywps.app.basic import get_xpath_ns
-from pywps.tests import WpsClient, WpsTestResponse
+from pywps.tests import WpsClient, WpsTestResponse, client_for
 
 VERSION = "1.0.0"
 WPS, OWS = get_ElementMakerForVersion(VERSION)
@@ -47,17 +47,17 @@ def resource_file(filepath):
     return os.path.join(TESTS_HOME, 'testdata', filepath)
 
 
-class WpsTestClient(WpsClient):
+# class WpsTestClient(WpsClient):
 
-    def get(self, *args, **kwargs):
-        query = "?"
-        for key, value in kwargs.items():
-            query += "{0}={1}&".format(key, value)
-        return super(WpsTestClient, self).get(query)
+#     def get(self, *args, **kwargs):
+#         query = "?"
+#         for key, value in kwargs.items():
+#             query += "{0}={1}&".format(key, value)
+#         return super(WpsTestClient, self).get(query)
 
 
-def client_for(service):
-    return WpsTestClient(service, WpsTestResponse)
+# def client_for(service):
+#     return WpsTestClient(service, WpsTestResponse)
 
 
 def get_output(doc):
@@ -81,3 +81,19 @@ def get_output(doc):
             output[identifier_el.text] = data_el[0].text
 
     return output
+
+
+def run_with_inputs(process, datainputs):
+    client = client_for(Service(processes=[process()]))
+
+    resp = client.get(
+        f"?service=WPS&request=Execute&version=1.0.0&identifier={process.__name__}"
+        f"&datainputs={datainputs}")
+
+    return resp
+
+
+def check_for_output_file(resp, filename):
+    # output_url = resp.xml.findall('.//{http://www.opengis.net/wps/1.0.0}Reference')[0].get('href')
+    output = get_output(resp.xml)
+    assert os.path.basename(output['output']) == filename
