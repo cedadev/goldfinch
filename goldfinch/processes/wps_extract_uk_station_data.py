@@ -5,7 +5,7 @@ from pywps import FORMATS
 from pywps.app.Common import Metadata
 
 from goldfinch.util import (get_station_list, validate_inputs, locate_process_dir,
-    filter_obs_by_time_chunk, read_from_file, ALLOWED_TABLES, WEATHER_STATIONS_FILE_NAME)
+    filter_obs_by_time_chunk, read_from_file, TABLE_NAMES, WEATHER_STATIONS_FILE_NAME)
 from goldfinch.time_split import DurationSplitter
 
 
@@ -63,7 +63,7 @@ class ExtractUKStationData(Process):
                          abstract='The name of the database table used in the MIDAS database to identify'
                                   ' a particular selection of weather observations.',
                          data_type='string',
-                         allowed_values=ALLOWED_TABLES,
+                         allowed_values=TABLE_NAMES,
                          # UK Daily Temperature, UK Daily Weather, UK Daily Rain,
                          # UK Hourly Rain, UK Sub-hourly Rain (to April 2005),
                          # UK Soil Temperature, UK Hourly Weather,
@@ -135,6 +135,11 @@ class ExtractUKStationData(Process):
         # Resolve the list of stations
         station_list = self._resolve_station_list(inputs)
 
+        # Write stations file
+        stations_file = WEATHER_STATIONS_FILE_NAME
+        stations_file_path = os.path.join(self.workdir, stationsFile)
+        self._write_stations_file(stations_file_path, station_list)
+
         # Estimate we are 5% of the way through
         self.response.update_status('Extracted station ID list.', 5)
 
@@ -173,7 +178,7 @@ class ExtractUKStationData(Process):
         for output_path in output_paths:
             LOGGER.info('Written output file: {}'.format(output_path))
 
-        self.response.outputs['output'].file = stations_file
+        self.response.outputs['stations'].file = stations_file_path
         return self.response
 
     def _resolve_station_list(self, inputs):
@@ -193,10 +198,6 @@ class ExtractUKStationData(Process):
             input_weather_stations_file = os.path.join(input_process_dir, WEATHER_STATIONS_FILE_NAME)
             station_list = read_from_file(input_weather_stations_file)
 
-        # Add output file
-        stationsFile = WEATHER_STATIONS_FILE_NAME
-        stations_file_path = os.path.join(self.workdir, stationsFile)
-
         # If not dry run
         if station_list == None:
             # Call code to get Weather Stations
@@ -206,7 +207,6 @@ class ExtractUKStationData(Process):
 
         # Write the file one per station id per line
         station_list.sort()
-        self._write_stations_file(stations_file_path, station_list)
 
         return station_list
 

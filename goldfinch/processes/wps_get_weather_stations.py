@@ -86,8 +86,8 @@ class GetWeatherStations(Process):
             counties=inputs['counties'],
             bbox=inputs['bbox'],
             data_types=inputs['datatypes'],
-            start_time=inputs['start'],
-            end_time=inputs['end'],
+            start=inputs['start'],
+            end=inputs['end'],
             output_file=stations_file)
 
         # We can log information at any time to the main log file

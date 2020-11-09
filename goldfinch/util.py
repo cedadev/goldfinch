@@ -4,18 +4,8 @@ from pywps.app.exceptions import ProcessError
 
 from midas_extract.stations import StationIDGetter
 from midas_extract.subsetter import MIDASSubsetter
+from midas_extract.vocabs import UK_COUNTIES, DATA_TYPES, TABLE_NAMES
 
-
-UK_COUNTIES = [
-    'cornwall',
-    'devon',
-    'wiltshire'
-]
-
-ALLOWED_DATA_TYPES = ['CLBD', 'CLBN', 'CLBR', 'CLBW', 'DCNN', 'FIXD',
- 'ICAO', 'LPMS', 'RAIN', 'SHIP', 'WIND', 'WMO']
-
-ALLOWED_TABLES = ['TD', 'WD', 'RD', 'RH', 'RS', 'ST', 'WH', 'WM', 'RO']
 
 WEATHER_STATIONS_FILE_NAME = 'weather_stations.txt'
 
@@ -91,7 +81,7 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
 
     # Split the time chunks appropriately
     ds = DurationSplitter()
-    time_splits = ds.splitDuration(startTime[:8], endTime[:8], chunk_rule)
+    time_splits = ds.splitDuration(start[:8], end[:8], chunk_rule)
     first_date = True
 
     # Create list to return
@@ -99,7 +89,7 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
 
     progress = 5 # % of way to completion
 
-    for (count, (start_date, end_date)) in enumerate(time_splits):
+    for count, (start_date, end_date) in enumerate(time_splits):
 
         # Add appropriate hours and minutes to date strings to make 12 character times
         if first_date == True:
@@ -124,8 +114,6 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
 
         # Report on progress
         progress = int(float(count) / len(time_splits) * 100)
-        context.setStatus(STATUS.STARTED, 'Station data being extracted', progress)
-        context.saveStatus()
 
     return output_file_paths
 
