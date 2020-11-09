@@ -1,11 +1,11 @@
-import os.path
+import os
 
 from pywps import Process, LiteralInput, ComplexOutput, BoundingBoxInput
 from pywps import FORMATS
 
 from pywps.app.Common import Metadata
 
-from goldfinch.util import get_station_list, validate_inputs
+from goldfinch.util import get_station_list, validate_inputs, WEATHER_STATIONS_FILE_NAME
 
 import logging
 LOGGER = logging.getLogger("PYWPS")
@@ -41,7 +41,7 @@ class GetWeatherStations(Process):
                          min_occurs=0),
             LiteralInput('datatypes', 'Data Types',
                          data_type='string',
-                         min_occurs=0),
+                         min_occurs=0)
         ]
         outputs = [
             ComplexOutput('output', 'Output',
@@ -63,9 +63,10 @@ class GetWeatherStations(Process):
             keywords=['stations', 'uk', 'demo', 'weather', 'observations'],
             metadata=[
                 Metadata('User Guide', 'https://goldfinch.readthedocs.io'),
+                Metadata('CEDA WPS', '****TO BE ADDED*****'),
                 Metadata('Disclaimer' 'https://help.ceda.ac.uk/article/4642-disclaimer')
             ],
-            version='1.0',
+            version='2.0.0',
             inputs=inputs,
             outputs=outputs,
             store_supported=True,
@@ -79,7 +80,7 @@ class GetWeatherStations(Process):
         inputs = validate_inputs(request.inputs)
 
         # Add output file
-        stations_file = os.path.join(self.workdir, 'weather_stations.txt')
+        stations_file = os.path.join(self.workdir, WEATHER_STATIONS_FILE_NAME)
 
         get_station_list(
             counties=inputs['counties'],

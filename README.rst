@@ -32,6 +32,14 @@ https://goldfinch.readthedocs.io.
 Submit bug reports, questions and feature requests at
 https://github.com/cedadev/goldfinch/issues
 
+Quick Start
+-----------
+
+```
+make install
+make start
+```
+
 Contributing
 ------------
 
