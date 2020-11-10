@@ -24,7 +24,7 @@ def test_wps_extract_uk_station_data_no_table_fail():
 
 
 def test_wps_extract_uk_station_data_one_county_success():
-    datainputs = "obs_table=RD;counties=devon;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00"
+    datainputs = "obs_table=TD;counties=devon;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
     assert_response_success(resp)
