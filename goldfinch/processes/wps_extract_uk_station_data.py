@@ -6,7 +6,6 @@ from pywps.app.Common import Metadata
 
 from goldfinch.util import (get_station_list, validate_inputs, locate_process_dir,
     filter_obs_by_time_chunk, read_from_file, TABLE_NAMES, WEATHER_STATIONS_FILE_NAME)
-from goldfinch.time_split import DurationSplitter
 
 
 import logging
@@ -87,6 +86,10 @@ class ExtractUKStationData(Process):
                           abstract='Station list.',
                           as_reference=True,
                           supported_formats=[FORMATS.TEXT]),
+            ComplexOutput('doc_links_file', 'Documentation links file',
+                          abstract='File containing links to metadata and documentation.',
+                          as_reference=True,
+                          supported_formats=[FORMATS.TEXT]),
             ]
 
         super(ExtractUKStationData, self).__init__(
@@ -130,14 +133,16 @@ class ExtractUKStationData(Process):
         input_defaults = {'station_ids': [], 'input_job_id': None, 
                           'chunk_rule': 'year', 'delimiter': 'comma'}
 
-        inputs = validate_inputs(request.inputs, defaults=input_defaults)
+        inputs = validate_inputs(request.inputs, defaults=input_defaults,
+                                 required=['obs_table', 'start', 'end'])
 
         # Resolve the list of stations
-        station_list = self._resolve_station_list(inputs)
+        stations_file = WEATHER_STATIONS_FILE_NAME
+        stations_file_path = os.path.join(self.workdir, stations_file)
+
+        station_list = self._resolve_station_list(inputs, stations_file_path)
 
         # Write stations file
-        stations_file = WEATHER_STATIONS_FILE_NAME
-        stations_file_path = os.path.join(self.workdir, stationsFile)
         self._write_stations_file(stations_file_path, station_list)
 
         # Estimate we are 5% of the way through
@@ -162,17 +167,17 @@ class ExtractUKStationData(Process):
             os.makedirs(proc_tmp_dir)
 
         # Get Obs Table Names to extract from
-        obs_table_names = self._get_obs_table_names(inputs)
+        obs_table = inputs['obs_table']
 
-        raise Exception('Where is time chunking managed? And where do we zip up outputs?')
-        output_paths = filter_obs_by_time_chunk(obs_table_names, output_file_base, 
+        # Extract the observations by filtering the full dataset
+        output_paths = filter_obs_by_time_chunk(obs_table, output_file_base, 
                                            start=inputs['start'], end=inputs['end'], 
                                            src_ids=station_list, delimiter=inputs['delimiter'],
                                            tmp_dir=proc_tmp_dir) 
 
         # Write docs links to output file
         doc_links_file = os.path.join(self.workdir, 'doc_links.txt')
-        self._write_doc_links_file(doc_links_file, obs_table_names[0])
+        self._write_doc_links_file(doc_links_file, obs_table)
 
         # We can log information at any time to the main log file
         for output_path in output_paths:
@@ -181,7 +186,7 @@ class ExtractUKStationData(Process):
         self.response.outputs['stations'].file = stations_file_path
         return self.response
 
-    def _resolve_station_list(self, inputs):
+    def _resolve_station_list(self, inputs, stations_file_path):
         """
         Works out whether we need to generate a station list or use those
         sent as inputs.
@@ -199,11 +204,12 @@ class ExtractUKStationData(Process):
             station_list = read_from_file(input_weather_stations_file)
 
         # If not dry run
-        if station_list == None:
+        if not station_list:
             # Call code to get Weather Stations
             counties_list = self._get_counties(inputs)
-            station_list = get_station_list(counties_list, inputs['bbox'], inputs['datatypes'], 
-                                            inputs['start'], inputs['end'], stations_file_path)
+            station_list = get_station_list(counties_list, inputs['bbox'],  
+                                            inputs['start'], inputs['end'], 
+                                            stations_file_path)
 
         # Write the file one per station id per line
         station_list.sort()
@@ -215,7 +221,7 @@ class ExtractUKStationData(Process):
         with open(stations_file_path, "w") as fout:
             fout.write("\r\n".join([str(station) for station in station_list]))
 
-        self.response.outputs['stations_file'].file = stations_file_path
+        self.response.outputs['stations'].file = stations_file_path
 
     def _check_request_size(self, station_list, inputs):
         """Checks the size of the request against allowed limits.
@@ -281,14 +287,7 @@ class ExtractUKStationData(Process):
 
         self.response.outputs['doc_links_file'].file = doc_links_file
 
-
     def _get_counties(self, inputs):
         "Returns a list of UK counties as specified in args dictionary."
         return inputs["counties"]
-
-
-    def _get_obs_table_names(self, inputs):
-        "Returns a list of Table codes required for extraction."
-        return [inputs["ObsTableName"]]
-
 

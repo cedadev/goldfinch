@@ -1,6 +1,6 @@
 from pywps import get_ElementMakerForVersion, Service
 from pywps.app.basic import get_xpath_ns
-from pywps.tests import WpsClient, WpsTestResponse
+from pywps.tests import WpsClient, WpsTestResponse, client_for
 
 VERSION = "1.0.0"
 WPS, OWS = get_ElementMakerForVersion(VERSION)
@@ -13,7 +13,6 @@ import tempfile
 
 TESTS_HOME = os.path.abspath(os.path.dirname(__file__))
 PYWPS_CFG = os.path.join(TESTS_HOME, 'pywps.cfg')
-ROOCS_CFG = os.path.join(tempfile.gettempdir(), 'roocs.ini')
 
 
 def write_roocs_cfg():
@@ -37,10 +36,6 @@ def write_roocs_cfg():
     base_dir = {{ base_dir }}/mini-esgf-data/test_data/group_workspaces/jasmin2/cp4cds1/vol1/data
     """
     cfg = Template(cfg_templ).render(base_dir=TESTS_HOME)
-    with open(ROOCS_CFG, 'w') as fp:
-        fp.write(cfg)
-    # point to roocs cfg in environment
-    os.environ['ROOCS_CONFIG'] = ROOCS_CFG
 
 
 def resource_file(filepath):
@@ -56,7 +51,7 @@ class WpsTestClient(WpsClient):
         return super(WpsTestClient, self).get(query)
 
 
-def client_for(service):
+def wps_test_client_for(service):
     return WpsTestClient(service, WpsTestResponse)
 
 
@@ -85,11 +80,10 @@ def get_output(doc):
 
 def run_with_inputs(process, datainputs):
     client = client_for(Service(processes=[process()]))
+    url = (f"?service=WPS&request=Execute&version=1.0.0&identifier={process.__name__}"
+           f"&datainputs={datainputs}")
 
-    resp = client.get(
-        f"?service=WPS&request=Execute&version=1.0.0&identifier={process.__name__}"
-        f"&datainputs={datainputs}")
-
+    resp = client.get(url)
     return resp
 
 

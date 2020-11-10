@@ -2,6 +2,8 @@ import copy
 
 from pywps.app.exceptions import ProcessError
 
+from goldfinch.time_split import DurationSplitter
+
 from midas_extract.stations import StationIDGetter
 from midas_extract.subsetter import MIDASSubsetter
 from midas_extract.vocabs import UK_COUNTIES, DATA_TYPES, TABLE_NAMES
@@ -22,7 +24,7 @@ def translate_bbox(wps_bbox):
     return (n, w, s, e)
 
 
-def get_station_list(counties, bbox, start, end, output_file, data_types=None):
+def get_station_list(counties, bbox, start, end, output_file, data_type=None):
     """
     Wrapper to call of midas station getter code.
     """
@@ -33,7 +35,7 @@ def get_station_list(counties, bbox, start, end, output_file, data_types=None):
     station_getter = StationIDGetter(
         counties,
         bbox=bbox,
-        data_types=data_types,
+        data_type=data_type,
         start_time=revert_datetime_to_long_string(start),
         end_time=revert_datetime_to_long_string(end),
         output_file=output_file,
@@ -84,6 +86,12 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
     time_splits = ds.splitDuration(start[:8], end[:8], chunk_rule)
     first_date = True
 
+    # Set the extension
+    if delimiter == "comma":
+        ext = "csv"
+    else:
+        ext = "txt"
+
     # Create list to return
     output_file_paths = []
 
@@ -104,11 +112,11 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
             end = "%s2359" % (end_date.date)
 
         # Decide the output file path
-        output_file_path = "%s-%s-%s.%s" % (output_file_base, start, end, ext)
+        output_file_path = "%s-%s-%s.%s" % (output_path, start, end, ext)
         output_file_paths.append(output_file_path)
 
         # Call subsetter to extract and write the data
-        filter_observations(obs_tables, output_file_path, start=start, end=end, columns=columns,
+        filter_observations(table_name, output_file_path, start=start, end=end, columns=columns,
                             conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter, 
                             tmp_dir=tmp_dir, verbose=verbose)
 
@@ -125,14 +133,27 @@ def revert_datetime_to_long_string(dt):
     return str(dt).replace('-', '').replace(' ', '').replace('T', '').replace(':', '')
 
 
-def validate_inputs(inputs, defaults=None):
+def validate_inputs(inputs, defaults=None, required=None):
     """
     Receive inputs dictionary, process it, perform validations and 
     return a new dictionary.
 
     Also sets defaults for values based on dictionary of `defaults`.
+    
+    You can set `required` as a sequence of keys that must exist.
     """
     if not defaults: defaults = {}
+    if not required: required = []
+
+    req_not_present = []
+
+    for req_input in required:
+        if req_input not in inputs:
+            req_not_present.append(req_input)
+
+    # Fail if required parameters are not present
+    if req_not_present:
+        raise KeyError(f'Missing input parameters, please provide: {req_not_present}.')
 
     resp = copy.deepcopy(inputs)
 
@@ -141,9 +162,11 @@ def validate_inputs(inputs, defaults=None):
         
         if not set(UK_COUNTIES).issuperset(set(resp['counties'])):
             raise ProcessError(f'Counties must be valid UK counties, not: {resp["counties"]}.')
-
     else:
         resp['counties'] = []
+
+    if 'obs_table' in inputs:
+        resp['obs_table'] = inputs['obs_table'][0].data
 
     if 'bbox' in inputs:
         resp['bbox'] = [float(_) for _ in inputs['bbox'][0].data.split(',')]
@@ -154,6 +177,9 @@ def validate_inputs(inputs, defaults=None):
         resp['datatypes'] = [data_type.data for data_type in inputs['datatypes']]
     else:
         resp['datatypes'] = None
+
+    if 'delimiter' in inputs:
+        resp['delimiter'] = inputs['delimiter'][0].data
 
     # Fix datetimes
     for dt in ('start', 'end'):

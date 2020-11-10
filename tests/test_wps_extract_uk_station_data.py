@@ -1,22 +1,33 @@
+import os
 import pytest
 
-from pywps import Service
-from pywps.tests import client_for, assert_response_success
+from pywps.tests import assert_response_success
 
-from .common import get_output
+from .common import get_output, run_with_inputs, check_for_output_file
 from goldfinch.processes.wps_extract_uk_station_data import ExtractUKStationData
 
 
-def test_wps_extract_uk_station_data():
-    client = client_for(Service(processes=[ExtractUKStationData()]))
-    datainputs = "counties=devon;StartDateTime=2017-10-01%2000:00:00;EndDateTime=2018-01-31%2000:00:00"
-    resp = client.get(
-        "?service=WPS&request=Execute&version=1.0.0&identifier=ExtractUKStationData&datainputs={}".format(
-            datainputs))
+def test_wps_extract_uk_station_data_no_params_fail():
+    datainputs = ""
+    resp = run_with_inputs(ExtractUKStationData, datainputs)
 
-    try:
-        assert_response_success(resp)
-    except Exception:
-        raise AssertionError(f"Failed response: {resp.response}")
+    assert "ExceptionReport" in resp.response[0].decode('utf-8')
 
-    assert 'output' in get_output(resp.xml)
+# TODO: work out how to raise an exception in the code that gets put in the 
+#       Exception Report returned by the server
+def test_wps_extract_uk_station_data_no_table_fail():
+    datainputs = "counties=devon;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00"
+    resp = run_with_inputs(ExtractUKStationData, datainputs)
+
+    assert "please provide: ['obs_table']" in resp.response[0].decode('utf-8')
+
+
+def test_wps_extract_uk_station_data_one_county_success():
+    datainputs = "obs_table=RD;counties=devon;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00"
+    resp = run_with_inputs(ExtractUKStationData, datainputs)
+
+    assert_response_success(resp)
+    output = get_output(resp.xml)
+
+    assert 'output' in output
+    assert 'stations' in output

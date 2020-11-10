@@ -1,6 +1,6 @@
 """
-duration_splitter.py
-====================
+time_split.py
+=============
 
 Holds class DurationSplitter used to chop up time series into chunks of
 decades, years or months.
@@ -9,7 +9,7 @@ decades, years or months.
 import re
 
 
-class SimpleDate(object):
+class SimpleDate:
 
     def __init__(self, y, m, d):
         self.y = int(y)
@@ -33,7 +33,7 @@ class SimpleDate(object):
         return False
 
 
-class DurationSplitter(object):
+class DurationSplitter:
     """
     Splits into sensible time chunks based on inputs.
     """
@@ -51,7 +51,7 @@ class DurationSplitter(object):
         Converts and returns date to a SimpleDate instance. If format is bad it raises an exception.
         """
         if type(date) == type("string"):
-            if len(date) != 8 or not re.match("^\d{8}$", date):
+            if len(date) != 8 or not re.match(r"^\d{8}$", date):
                 raise Exception("Invalid date: %s" % str(date))
 
             return SimpleDate(date[:4], date[4:6], date[6:8])
