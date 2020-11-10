@@ -27,6 +27,7 @@ class GetWeatherStations(Process):
             #                  abstract='The spatial bounding box within which to search for weather stations.'
             #                           ' This input will be ignored if counties are provided.',
             #                  crss=['epsg:4326', 'epsg:3035'],
+            #  CAN YOU SET DEFAULT VALUES???
             #                  min_occurs=0),
             LiteralInput('bbox', 'Bounding Box',
                          abstract='The spatial bounding box within which to search for weather stations.'
