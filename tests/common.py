@@ -1,6 +1,6 @@
 from pywps import get_ElementMakerForVersion, Service
 from pywps.app.basic import get_xpath_ns
-from pywps.tests import WpsClient, WpsTestResponse, client_for
+from pywps.tests import WpsClient, WpsTestResponse
 
 VERSION = "1.0.0"
 WPS, OWS = get_ElementMakerForVersion(VERSION)
@@ -47,17 +47,17 @@ def resource_file(filepath):
     return os.path.join(TESTS_HOME, 'testdata', filepath)
 
 
-# class WpsTestClient(WpsClient):
+class WpsTestClient(WpsClient):
 
-#     def get(self, *args, **kwargs):
-#         query = "?"
-#         for key, value in kwargs.items():
-#             query += "{0}={1}&".format(key, value)
-#         return super(WpsTestClient, self).get(query)
+    def get(self, *args, **kwargs):
+        query = "?"
+        for key, value in kwargs.items():
+            query += "{0}={1}&".format(key, value)
+        return super(WpsTestClient, self).get(query)
 
 
-# def client_for(service):
-#     return WpsTestClient(service, WpsTestResponse)
+def client_for(service):
+    return WpsTestClient(service, WpsTestResponse)
 
 
 def get_output(doc):
