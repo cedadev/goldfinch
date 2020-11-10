@@ -86,10 +86,11 @@ class GetWeatherStations(Process):
         get_station_list(
             counties=inputs['counties'],
             bbox=inputs['bbox'],
-            data_types=inputs['datatypes'],
             start=inputs['start'],
             end=inputs['end'],
-            output_file=stations_file)
+            output_file=stations_file,
+            data_type=inputs['datatypes']
+        )
 
         # We can log information at any time to the main log file
         LOGGER.info(f'Written output file: {stations_file}')
