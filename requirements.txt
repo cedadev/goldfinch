@@ -3,4 +3,4 @@ jinja2
 click
 psutil
 
-midas-extract
+git+https://github.com/cedadev/midas-extract
