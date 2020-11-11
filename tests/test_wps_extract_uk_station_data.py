@@ -24,6 +24,7 @@ def test_wps_extract_uk_station_data_no_params_fail():
 
     assert "ExceptionReport" in resp.response[0].decode('utf-8')
 
+
 # TODO: work out how to raise an exception in the code that gets put in the 
 #       Exception Report returned by the server
 def test_wps_extract_uk_station_data_no_table_fail():
