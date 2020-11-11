@@ -153,7 +153,7 @@ def validate_inputs(inputs, defaults=None, required=None):
 
     # Fail if required parameters are not present
     if req_not_present:
-        raise KeyError(f'Missing input parameters, please provide: {req_not_present}.')
+        raise ProcessError(f'Missing input parameters, please provide: {req_not_present}.')
 
     resp = copy.deepcopy(inputs)
 

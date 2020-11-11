@@ -96,7 +96,7 @@ class ExtractUKStationData(Process):
             self._handler,
             identifier='ExtractUKStationData',
             title='Extract UK Station Data',
-            abstract='The "Extract UK Station Data" process provides tools to'
+            abstract='The Extract UK Station Data process provides tools to'
                      ' access surface station weather observations for a range'
                      ' of variables throughout the UK.'
                      ' These include temperature, rainfall and wind measurements.'
