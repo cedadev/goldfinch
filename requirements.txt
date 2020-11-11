@@ -2,5 +2,4 @@ pywps>=4.2
 jinja2
 click
 psutil
-
-midas-extract
+midas_extract@git+https://github.com/cedadev/midas-extract.git#egg=midas_extract
