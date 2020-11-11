@@ -184,6 +184,7 @@ class ExtractUKStationData(Process):
             LOGGER.info('Written output file: {}'.format(output_path))
 
         self.response.outputs['stations'].file = stations_file_path
+
         return self.response
 
     def _resolve_station_list(self, inputs, stations_file_path):

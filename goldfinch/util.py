@@ -146,7 +146,7 @@ def validate_inputs(inputs, defaults=None, required=None):
     if not required: required = []
 
     req_not_present = []
-
+    
     for req_input in required:
         if req_input not in inputs:
             req_not_present.append(req_input)
@@ -167,6 +167,11 @@ def validate_inputs(inputs, defaults=None, required=None):
 
     if 'obs_table' in inputs:
         resp['obs_table'] = inputs['obs_table'][0].data
+
+    if 'station_ids' in inputs:
+        resp['station_ids'] = [s_id for s_id in inputs['station_ids'][0].data.split(',')]
+    else:
+        resp['station_ids'] = []
 
     if 'bbox' in inputs:
         resp['bbox'] = [float(_) for _ in inputs['bbox'][0].data.split(',')]

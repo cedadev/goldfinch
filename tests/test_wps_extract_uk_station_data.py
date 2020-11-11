@@ -18,6 +18,8 @@ data_inputs = ['obs_table=TD;counties=devon;start=2017-10-01T00:00:00;end=2018-0
                'obs_table=TD;bbox=0,0,10,10;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00',
                'obs_table=TD;delimiter=tab;bbox=-5,-23,41,64;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00']
 
+station_inputs = ['56810', '17101,1007', '1039,57199,1144']
+
 def test_wps_extract_uk_station_data_no_params_fail():
     datainputs = ""
     resp = run_with_inputs(ExtractUKStationData, datainputs)
@@ -40,5 +42,16 @@ def test_wps_extract_uk_station_data_success(ex_input):
     assert_response_success(resp)
     output = get_output(resp.xml)
 
+    assert 'output' in output
+    assert 'stations' in output
+
+@pytest.mark.parametrize('station_ids', station_inputs)
+def test_wps_extract_uk_station_id_match_csv(station_ids):
+    datainputs = f"obs_table=TD;station_ids={station_ids};start=2017-10-01T00:00:00;end=2017-10-02T00:00:00"
+    resp = run_with_inputs(ExtractUKStationData, datainputs)
+
+    assert_response_success(resp)
+    output = get_output(resp.xml)
+    #import pdb; pdb.set_trace()
     assert 'output' in output
     assert 'stations' in output
