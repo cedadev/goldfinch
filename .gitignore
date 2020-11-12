@@ -91,3 +91,6 @@ testdata.json
 
 # Merge conflict
 *.orig
+
+#vscode
+.vscode

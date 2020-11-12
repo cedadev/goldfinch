@@ -43,6 +43,8 @@ def test_wps_extract_uk_station_data_success(ex_input):
     assert_response_success(resp)
     output = get_output(resp.xml)
 
+    import pdb; pdb.set_trace()
+
     assert 'output' in output
     assert 'stations' in output
 
@@ -53,6 +55,6 @@ def test_wps_extract_uk_station_id_match_csv(station_ids):
 
     assert_response_success(resp)
     output = get_output(resp.xml)
-    #import pdb; pdb.set_trace()
+
     assert 'output' in output
     assert 'stations' in output
