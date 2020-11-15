@@ -5,7 +5,8 @@ from pywps import FORMATS
 from pywps.app.Common import Metadata
 
 from goldfinch.util import (get_station_list, validate_inputs, locate_process_dir,
-    filter_obs_by_time_chunk, read_from_file, TABLE_NAMES, WEATHER_STATIONS_FILE_NAME)
+                            filter_obs_by_time_chunk, read_from_file, TABLE_NAMES,
+                            WEATHER_STATIONS_FILE_NAME)
 
 
 import logging
@@ -116,7 +117,6 @@ class ExtractUKStationData(Process):
             status_supported=True
         )
 
-
     def _handler(self, request, response):
         # TODO: dry-run
         LOGGER.info("Extracting UK station data")
@@ -127,7 +127,7 @@ class ExtractUKStationData(Process):
         self.response.update_status('Job is now running', 0)
 
         # Define defaults for arguments that might not be set
-        input_defaults = {'station_ids': [], 'input_job_id': None, 
+        input_defaults = {'station_ids': [], 'input_job_id': None,
                           'chunk_rule': None, 'delimiter': 'comma'}
 
         inputs = validate_inputs(request.inputs, defaults=input_defaults,
@@ -154,7 +154,7 @@ class ExtractUKStationData(Process):
 
         # Need temp dir for big file extractions
         proc_tmp_dir = os.path.join(self.workdir, 'tmp')
-        
+
         if not os.path.isdir(proc_tmp_dir):
             os.makedirs(proc_tmp_dir)
 
@@ -162,10 +162,10 @@ class ExtractUKStationData(Process):
         obs_table = inputs['obs_table']
 
         # Extract the observations by filtering the full dataset
-        output_paths = filter_obs_by_time_chunk(obs_table, output_file_base, 
-                                           start=inputs['start'], end=inputs['end'], 
-                                           src_ids=station_list, delimiter=inputs['delimiter'],
-                                           tmp_dir=proc_tmp_dir) 
+        output_paths = filter_obs_by_time_chunk(obs_table, output_file_base,
+                                                start=inputs['start'], end=inputs['end'],
+                                                src_ids=station_list, delimiter=inputs['delimiter'],
+                                                tmp_dir=proc_tmp_dir)
 
         # Register output file(s)
 # TODO: register more than one if multiple
@@ -202,8 +202,8 @@ class ExtractUKStationData(Process):
         if not station_list:
             # Call code to get Weather Stations
             counties_list = self._get_counties(inputs)
-            station_list = get_station_list(counties_list, inputs['bbox'],  
-                                            inputs['start'], inputs['end'], 
+            station_list = get_station_list(counties_list, inputs['bbox'],
+                                            inputs['start'], inputs['end'],
                                             stations_file_path)
 
         # Write the file one per station id per line
@@ -250,7 +250,6 @@ class ExtractUKStationData(Process):
             raise Exception('No weather stations have been found for this request. Please '
                             'modify your request and try again.')
 
-
     def _write_doc_links_file(self, doc_links_file, obs_table):
         "Write documentation links file."
 
@@ -285,4 +284,3 @@ class ExtractUKStationData(Process):
     def _get_counties(self, inputs):
         "Returns a list of UK counties as specified in args dictionary."
         return inputs["counties"]
-

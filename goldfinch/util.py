@@ -44,8 +44,8 @@ def get_station_list(counties, bbox, start, end, output_file, data_type=None):
     return station_getter.st_list
 
 
-def filter_observations(table_name, output_path, start=None, end=None, columns="all", 
-                        conditions=None, src_ids=None, region=None, delimiter="default", 
+def filter_observations(table_name, output_path, start=None, end=None, columns="all",
+                        conditions=None, src_ids=None, region=None, delimiter="default",
                         tmp_dir=None, verbose=False):
     """
     Wrapper to call to observation subsetter class.
@@ -64,19 +64,19 @@ def filter_observations(table_name, output_path, start=None, end=None, columns="
         verbose (int, optional): [description]. Defaults to 1.
     """
 
-    return MIDASSubsetter(table_name, output_path, startTime=revert_datetime_to_long_string(start), 
-                          endTime=revert_datetime_to_long_string(end), columns=columns, 
-                          conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter, 
+    return MIDASSubsetter(table_name, output_path, startTime=revert_datetime_to_long_string(start),
+                          endTime=revert_datetime_to_long_string(end), columns=columns,
+                          conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter,
                           tmp_dir=tmp_dir, verbose=verbose)
 
 
-def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, columns="all", 
-                        conditions=None, src_ids=None, region=None, delimiter="default", 
-                        chunk_rule=None, tmp_dir=None, verbose=False):
+def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, columns="all",
+                             conditions=None, src_ids=None, region=None, delimiter="default",
+                             chunk_rule=None, tmp_dir=None, verbose=False):
     """
     Loops through time chunks extracting data to files in required time chunks.
 
-    If `chunk_rule` is None, then do not split, just forward to 
+    If `chunk_rule` is None, then do not split, just forward to
     `filter_observations()`.
 
     We pass the context object through here so that we can report progress.
@@ -102,7 +102,7 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
     for count, (start_date, end_date) in enumerate(time_splits):
 
         # Add appropriate hours and minutes to date strings to make 12 character times
-        if first_date == True:
+        if first_date:
             start = "%s%s" % (start_date.date, start_hr_min)
             first_date = False
         else:
@@ -119,7 +119,7 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
 
         # Call subsetter to extract and write the data
         filter_observations(table_name, output_file_path, start=start, end=end, columns=columns,
-                            conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter, 
+                            conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter,
                             tmp_dir=tmp_dir, verbose=verbose)
 
         # Report on progress
@@ -137,18 +137,18 @@ def revert_datetime_to_long_string(dt):
 
 def validate_inputs(inputs, defaults=None, required=None):
     """
-    Receive inputs dictionary, process it, perform validations and 
+    Receive inputs dictionary, process it, perform validations and
     return a new dictionary.
 
     Also sets defaults for values based on dictionary of `defaults`.
-    
+
     You can set `required` as a sequence of keys that must exist.
     """
     if not defaults: defaults = {}
     if not required: required = []
 
     req_not_present = []
-    
+
     for req_input in required:
         if req_input not in inputs:
             req_not_present.append(req_input)
@@ -161,7 +161,7 @@ def validate_inputs(inputs, defaults=None, required=None):
 
     if 'counties' in inputs:
         resp['counties'] = [_ for _ in inputs['counties'][0].data.split(',')]
-        
+
         if not set(UK_COUNTIES).issuperset(set(resp['counties'])):
             raise ProcessError(f'Counties must be valid UK counties, not: {resp["counties"]}.')
     else:
@@ -200,9 +200,9 @@ def validate_inputs(inputs, defaults=None, required=None):
         if not resp.get(key, None):
             resp[key] = value
 
-    if resp['counties'] == [] and resp['bbox'] == None and \
-        resp.get('station_ids', []) == [] and \
-        not resp.get('input_job_id'):
+    if resp['counties'] == [] and resp['bbox'] is None and \
+       resp.get('station_ids', []) == [] and \
+       not resp.get('input_job_id'):
         raise Exception('Invalid arguments provided. Must provide one of (i) a geographical bounding box, (ii) a list of counties,'
                         ' (iii) a set of station IDs or (iv) an input job ID from which a file containing a set of selected station'
                         ' IDs can be extracted.')

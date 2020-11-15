@@ -34,9 +34,9 @@ def midas_data():
         resp.append(get_file_path(fpath))
 
     os.environ['MIDAS_DATA_DIR'] = opj(mini_ceda_archive,
-                                           midas_data_dir)
+                                       midas_data_dir)
     return resp
-        
+
 
 @pytest.fixture
 def midas_metadata():
@@ -47,8 +47,6 @@ def midas_metadata():
         print(f'Getting: {mpath}')
         resp.append(get_file_path(mpath))
 
-    os.environ['MIDAS_METADATA_DIR'] = opj(mini_ceda_archive, 
-                                               midas_metadata_dir)
+    os.environ['MIDAS_METADATA_DIR'] = opj(mini_ceda_archive,
+                                           midas_metadata_dir)
     return resp
-
-

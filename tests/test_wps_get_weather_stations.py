@@ -50,4 +50,3 @@ def test_wps_get_weather_stations_start_end_fail(midas_metadata):
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert "ExceptionReport" in resp.response[0].decode('utf-8')
-

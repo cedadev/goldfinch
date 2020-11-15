@@ -39,7 +39,7 @@ class DurationSplitter:
     """
     known_chunk_units = ["decade", "year", "month"]
 
-    def __init__(self, chunk_unit = "decade"):
+    def __init__(self, chunk_unit="decade"):
         """
         Allows the setting of a persistent chunk_unit.
         """
@@ -50,18 +50,18 @@ class DurationSplitter:
         """
         Converts and returns date to a SimpleDate instance. If format is bad it raises an exception.
         """
-        if type(date) == type("string"):
+        if isinstance(date, str):
             if len(date) != 8 or not re.match(r"^\d{8}$", date):
                 raise Exception("Invalid date: %s" % str(date))
 
             return SimpleDate(date[:4], date[4:6], date[6:8])
 
-        elif type(date) in (type((1,2)), type([1,2])):
+        elif type(date) in (type((1, 2)), type([1, 2])):
             if len(date) != 3:
                 raise Exception("Invalid date: %s" % str(date))
 
             for i in date:
-                if type(i) != type(1):
+                if isinstance(i, int):
                     raise Exception("Invalid date: %s" % str(date))
 
             return SimpleDate(date[0], date[1], date[2])
@@ -69,11 +69,9 @@ class DurationSplitter:
         else:
             raise Exception("Invalid date: %s" % str(date))
 
-
     def _checkChunkUnit(self, chunk_unit):
         if chunk_unit not in self.known_chunk_units:
             raise Exception("Invalid chunk unit '%s' not in list of %s." % (chunk_unit, str(self.known_chunk_units)))
-
 
     def splitDuration(self, start_date, end_date, chunk_unit=None):
         """
@@ -92,7 +90,7 @@ class DurationSplitter:
         start = self._convertDate(start_date)
         end = self._convertDate(end_date)
 
-        if chunk_unit != None:
+        if chunk_unit is not None:
             self._checkChunkUnit(chunk_unit)
         else:
             chunk_unit = self.chunk_unit
@@ -108,8 +106,8 @@ class DurationSplitter:
             ct = self._addDay(ct)
 
             if (self._isLastDayOfMonth(ct) and chunk_unit == "month") or \
-                   (self._isLastDayOfYear(ct) and chunk_unit == "year") or \
-                   (self._isLastDayOfDecade(ct) and chunk_unit == "decade"):
+               (self._isLastDayOfYear(ct) and chunk_unit == "year") or \
+               (self._isLastDayOfDecade(ct) and chunk_unit == "decade"):
 
                 this_chunk.append(ct)
                 chunks.append(this_chunk[:])
@@ -122,14 +120,12 @@ class DurationSplitter:
                 # Always the case for: chunk_unit=None
                 ct_appended = False
 
-
         # Now add end onto last one if it does not match end exactly
-        if ct_appended == False:
+        if ct_appended is False:
             this_chunk.append(ct)
             chunks.append(this_chunk[:])
 
         return chunks
-
 
     def _isLastDayOfMonth(self, date):
         "Returns True or False."
@@ -139,7 +135,6 @@ class DurationSplitter:
 
         return False
 
-
     def _isLastDayOfYear(self, date):
         "Returns True or False."
         if date.m == 12 and date.d == 31:
@@ -147,17 +142,15 @@ class DurationSplitter:
 
         return False
 
-
     def _isLastDayOfDecade(self, date):
         """
         Returns True or False.
         We define decades as 200001010000 - 200912312359
         """
-        if self._isLastDayOfYear(date) == True and date.y % 10 == 9:
+        if self._isLastDayOfYear(date) and date.y % 10 == 9:
             return True
 
         return False
-
 
     def _addDay(self, date):
         """
@@ -176,7 +169,6 @@ class DurationSplitter:
             d += 1
 
         return SimpleDate(y, m, d)
-
 
     def _daysInMonth(self, y, m):
         if y % 4 == 0 and m == 2:
