@@ -69,7 +69,7 @@ class ExtractUKStationData(Process):
             LiteralInput('delimiter', 'Delimiter',
                          abstract='The delimiter to be used in the output files.',
                          data_type='string',
-                         allowed_values=['comma', 'tab'],
+                         allowed_values=['comma', ',', 'tab'],
                          default='comma',
                          min_occurs=0,
                          max_occurs=1),
