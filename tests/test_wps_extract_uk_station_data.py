@@ -17,10 +17,12 @@ data_inputs = ['obs_table=TD;delimiter=tab;counties=devon;start=2017-01-01T00:00
                'obs_table=TD;counties=devon;start=2017-11-06T00:12:00;end=2019-01-15T00:12:00',
                'obs_table=TD;counties=powys (north),powys (south);start=2017-11-06T00:12:00;end=2019-01-15T00:12:00',
                'obs_table=TD;counties=surrey;start=2017-11-07T00:00:00;end=2019-03-15T00:00:00',
-               'obs_table=TD;bbox=0,4,50,55,urn:ogc:def:crs:EPSG:6.6:4326,2;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00',
+               'obs_table=TD;bbox=0,4,50,55,urn:ogc:def:crs:EPSG:6.6:4326,2;start=2017-10-01T00:00:00;'
+               'end=2018-01-31T00:00:00',
                'obs_table=TD;delimiter=tab;bbox=-5,-23,41,64;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00']
 
 station_inputs = ['56810', '17101,1007', '1039,57199,1144']
+
 
 def _extract_filepath(url):
     parts = url.split('/')
@@ -35,7 +37,7 @@ def test_wps_extract_uk_station_data_no_params_fail(midas_metadata, midas_data):
     assert "ExceptionReport" in resp.response[0].decode('utf-8')
 
 
-# TODO: work out how to raise an exception in the code that gets put in the 
+# TODO: work out how to raise an exception in the code that gets put in the
 #       Exception Report returned by the server
 @pytest.mark.skip
 def test_wps_extract_uk_station_data_no_table_fail(midas_metadata, midas_data):
@@ -46,7 +48,8 @@ def test_wps_extract_uk_station_data_no_table_fail(midas_metadata, midas_data):
 
 
 def test_wps_extract_uk_station_data_empty_bbox_fail(midas_metadata, midas_data):
-    datainputs = "obs_table=TD;bbox=0,0,10,10,urn:ogc:def:crs:EPSG:6.6:4326,2;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00"
+    datainputs = "obs_table=TD;bbox=0,0,10,10,urn:ogc:def:crs:EPSG:6.6:4326,2;start=2017-10-01T00:00:00;" \
+                 "end=2018-01-31T00:00:00"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
     assert "ExceptionReport" in resp.response[0].decode('utf-8')
@@ -76,7 +79,7 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
 
     output_file = _extract_filepath(output['output'])
     df = pandas.read_csv(output_file, skipinitialspace=True, sep=delimiter_dict[given_del])
-    
+
     start_pattern = re.compile('^start=.*$')
     start = dp.isoparse([inp for inp in input_list if start_pattern.match(inp)][0][6:])
 
@@ -88,6 +91,7 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
 
     assert 'output' in output
     assert 'stations' in output
+
 
 @pytest.mark.parametrize('station_ids', station_inputs)
 def test_wps_extract_uk_station_id_match_csv(station_ids):
