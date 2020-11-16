@@ -93,8 +93,8 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
 
 
 @pytest.mark.parametrize('station_ids', station_inputs)
-def test_wps_extract_uk_station_id_match_csv(station_ids):
-    datainputs = f"obs_table=TD;station_ids={station_ids};start=2017-10-01T00:00:00;end=2017-10-02T00:00:00"
+def test_wps_extract_uk_station_id_match_csv(midas_metadata, midas_data, station_ids):
+    datainputs = f"obs_table=TD;station_ids={station_ids};start=2017-01-01T00:00:00;end=2019-10-02T00:00:00"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
     assert_response_success(resp)
