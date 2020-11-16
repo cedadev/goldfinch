@@ -16,6 +16,13 @@ class ExtractUKStationData(Process):
     """A process extracting UK station data."""
     def __init__(self):
         inputs = [
+            LiteralInput('obs_table', 'Obervation Table Name',
+                         abstract='The name of the database table used in the MIDAS database to identify'
+                                  ' a particular selection of weather observations.',
+                         data_type='string',
+                         allowed_values=TABLE_NAMES,
+                         min_occurs=0,
+                         max_occurs=1),
             LiteralInput('start', 'Start Date Time',
                          abstract='The first date/time for which to search for operating weather stations.',
                          data_type='dateTime',
@@ -24,24 +31,19 @@ class ExtractUKStationData(Process):
                          abstract='The last date/time for which to search for operating weather stations.',
                          data_type='dateTime',
                          default='2018-02-25T12:00:00Z'),
-            LiteralInput('chunk_rule', 'Chunk Rule for Outputs',
-                         abstract='The period of time spanned by each output file.',
-                         data_type='string',
-                         allowed_values=['decade', 'year', 'month'],
-                         default='year',
-                         min_occurs=0),
-            # BoundingBoxInput('BBox', 'Bounding Box',
-            #                  abstract='The spatial bounding box within which to search for weather stations.'
-            #                           ' This input will be ignored if counties are provided.',
-            #                  crss=['epsg:4326', 'epsg:3035'],
-            #                  min_occurs=0),
-            LiteralInput('bbox', 'Bounding Box',
-                         abstract='The spatial bounding box within which to search for weather stations.'
-                         ' This input will be ignored if counties are provided.'
-                         ' Provide the bounding box as: "W,S,E,N".',
-                         data_type='string',
-                         min_occurs=0,
-                         max_occurs=1),
+            BoundingBoxInput('bbox', 'Bounding Box',
+                             abstract='The spatial bounding box within which to search for weather stations.'
+                                      ' This input will be ignored if counties are provided.',
+                             crss=['-12.0, 49.0, 3.0, 61.0,epsg:4326x'],
+                             min_occurs=0,
+                             max_occurs=1),
+            # LiteralInput('bbox', 'Bounding Box',
+            #              abstract='The spatial bounding box within which to search for weather stations.'
+            #              ' This input will be ignored if counties are provided.'
+            #              ' Provide the bounding box as: "W,S,E,N".',
+            #              data_type='string',
+            #              min_occurs=0,
+            #              max_occurs=1),
             LiteralInput('counties', 'Counties',
                          abstract='A list of counties within which to search for weather stations.',
                          data_type='string',
@@ -58,17 +60,12 @@ class ExtractUKStationData(Process):
                          data_type='string',
                          min_occurs=0,
                          max_occurs=1),
-            LiteralInput('obs_table', 'Obervation Table Name',
-                         abstract='The name of the database table used in the MIDAS database to identify'
-                                  ' a particular selection of weather observations.',
-                         data_type='string',
-                         allowed_values=TABLE_NAMES,
-                         # UK Daily Temperature, UK Daily Weather, UK Daily Rain,
-                         # UK Hourly Rain, UK Sub-hourly Rain (to April 2005),
-                         # UK Soil Temperature, UK Hourly Weather,
-                         # UK Mean Wind, Global Radiation Observations
-                         min_occurs=0,
-                         max_occurs=1),
+            # LiteralInput('chunk_rule', 'Chunk Rule for Outputs',
+            #              abstract='The period of time spanned by each output file.',
+            #              data_type='string',
+            #              allowed_values=['decade', 'year', 'month'],
+            #              default='year',
+            #              min_occurs=0),
             LiteralInput('delimiter', 'Delimiter',
                          abstract='The delimiter to be used in the output files.',
                          data_type='string',
@@ -109,7 +106,7 @@ class ExtractUKStationData(Process):
             keywords=['stations', 'uk', 'extract', 'observations', 'data'],
             metadata=[
                 Metadata('User Guide', 'http://badc.nerc.ac.uk/data/ukmo-midas/WPS.html'),
-                Metadata('CEDA WPS', '****TO BE ADDED*****'),
+                Metadata('CEDA WPS', 'https://ceda-wps.jasmin.ac.uk'),
                 Metadata('Disclaimer' 'https://help.ceda.ac.uk/article/4642-disclaimer')
             ],
             version='2.0.0',
@@ -131,7 +128,7 @@ class ExtractUKStationData(Process):
 
         # Define defaults for arguments that might not be set
         input_defaults = {'station_ids': [], 'input_job_id': None, 
-                          'chunk_rule': 'year', 'delimiter': 'comma'}
+                          'chunk_rule': None, 'delimiter': 'comma'}
 
         inputs = validate_inputs(request.inputs, defaults=input_defaults,
                                  required=['obs_table', 'start', 'end'])
@@ -153,11 +150,6 @@ class ExtractUKStationData(Process):
 
         # Define data file base
         prefix = 'station_data'
-        if inputs['delimiter'] == 'comma':
-            ext = 'csv'
-        else:
-            ext = 'txt'
-
         output_file_base = os.path.join(self.workdir, prefix)
 
         # Need temp dir for big file extractions
@@ -175,13 +167,15 @@ class ExtractUKStationData(Process):
                                            src_ids=station_list, delimiter=inputs['delimiter'],
                                            tmp_dir=proc_tmp_dir) 
 
+        # Register output file(s)
+# TODO: register more than one if multiple
+        output_path = output_paths[0]
+        LOGGER.info('Written output file: {}'.format(output_path))
+        self.response.outputs['output'].file = output_path
+
         # Write docs links to output file
         doc_links_file = os.path.join(self.workdir, 'doc_links.txt')
         self._write_doc_links_file(doc_links_file, obs_table)
-
-        # We can log information at any time to the main log file
-        for output_path in output_paths:
-            LOGGER.info('Written output file: {}'.format(output_path))
 
         self.response.outputs['stations'].file = stations_file_path
         return self.response

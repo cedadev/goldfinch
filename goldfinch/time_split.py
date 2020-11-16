@@ -75,7 +75,7 @@ class DurationSplitter:
             raise Exception("Invalid chunk unit '%s' not in list of %s." % (chunk_unit, str(self.known_chunk_units)))
 
 
-    def splitDuration(self, start_date, end_date, chunk_unit = None):
+    def splitDuration(self, start_date, end_date, chunk_unit=None):
         """
         Splits duration into  a list of n lists of [start, end] where each is represented as a SimpleDate
         instance with attributes of t.year, t.month, t.day. The list is returned.
@@ -119,6 +119,7 @@ class DurationSplitter:
                 ct_appended = True
 
             else:
+                # Always the case for: chunk_unit=None
                 ct_appended = False
 
 

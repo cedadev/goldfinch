@@ -72,9 +72,13 @@ def filter_observations(table_name, output_path, start=None, end=None, columns="
 
 def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, columns="all", 
                         conditions=None, src_ids=None, region=None, delimiter="default", 
-                        chunk_rule='year', tmp_dir=None, verbose=False):
+                        chunk_rule=None, tmp_dir=None, verbose=False):
     """
     Loops through time chunks extracting data to files in required time chunks.
+
+    If `chunk_rule` is None, then do not split, just forward to 
+    `filter_observations()`.
+
     We pass the context object through here so that we can report progress.
     Returns a list of output file paths produced.
     """
@@ -94,8 +98,6 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
 
     # Create list to return
     output_file_paths = []
-
-    progress = 5 # % of way to completion
 
     for count, (start_date, end_date) in enumerate(time_splits):
 
@@ -169,7 +171,7 @@ def validate_inputs(inputs, defaults=None, required=None):
         resp['obs_table'] = inputs['obs_table'][0].data
 
     if 'bbox' in inputs:
-        resp['bbox'] = [float(_) for _ in inputs['bbox'][0].data.split(',')]
+        resp['bbox'] = inputs['bbox'][0].data
     else:
         resp['bbox'] = None
 
@@ -177,6 +179,9 @@ def validate_inputs(inputs, defaults=None, required=None):
         resp['datatypes'] = [data_type.data for data_type in inputs['datatypes']]
     else:
         resp['datatypes'] = None
+
+    if 'chunk_rule' in inputs:
+        resp['chunk_rule'] = inputs['chunk_rule'][0].data
 
     if 'delimiter' in inputs:
         resp['delimiter'] = inputs['delimiter'][0].data
