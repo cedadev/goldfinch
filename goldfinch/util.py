@@ -219,4 +219,4 @@ def locate_process_dir(job_id):
 
 def read_from_file(fpath, converter=str):
     with open(fpath) as reader:
-        return [dtype(_) for _ in reader.read().strip().split()]
+        return [converter(_) for _ in reader.read().strip().split()]
