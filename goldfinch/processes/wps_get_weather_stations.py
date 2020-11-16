@@ -23,19 +23,19 @@ class GetWeatherStations(Process):
                          abstract='The last date/time for which to search for operating weather stations.',
                          data_type='dateTime',
                          default='2018-02-25T12:00:00Z'),
-            # BoundingBoxInput('bbox', 'Bounding Box',
-            #                  abstract='The spatial bounding box within which to search for weather stations.'
-            #                           ' This input will be ignored if counties are provided.',
-            #                  crss=['epsg:4326', 'epsg:3035'],
-            #  CAN YOU SET DEFAULT VALUES???
-            #                  min_occurs=0),
-            LiteralInput('bbox', 'Bounding Box',
-                         abstract='The spatial bounding box within which to search for weather stations.'
-                         ' This input will be ignored if counties are provided.'
-                         ' Provide the bounding box as: "W,S,E,N".',
-                         data_type='string',
-                         min_occurs=0,
-                         max_occurs=1),
+            BoundingBoxInput('bbox', 'Bounding Box',
+                             abstract='The spatial bounding box within which to search for weather stations.'
+                                       ' This input will be ignored if counties are provided.',
+                             crss=['-12.0, 49.0, 3.0, 61.0,epsg:4326x'],
+                             min_occurs=0,
+                             max_occurs=1),
+            # LiteralInput('bbox', 'Bounding Box',
+            #              abstract='The spatial bounding box within which to search for weather stations.'
+            #              ' This input will be ignored if counties are provided.'
+            #              ' Provide the bounding box as: "W,S,E,N".',
+            #              data_type='string',
+            #              min_occurs=0,
+            #              max_occurs=1),
             LiteralInput('counties', 'Counties',
                          abstract='A list of counties within which to search for weather stations.',
                          data_type='string',
