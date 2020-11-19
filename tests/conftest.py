@@ -1,12 +1,12 @@
 import os
-opj = os.path.join
-import shutil
 import pytest
 from pathlib import Path
 
 from midas_extract.testing import get_file_path
 
+opj = os.path.join
 home = Path.home()
+
 mini_ceda_archive = opj(home.as_posix(), '.mini_ceda_archive', 'archive')
 midas_data_dir = opj('badc', 'ukmo-midas', 'data')
 midas_metadata_dir = opj('badc', 'ukmo-midas', 'metadata')
@@ -34,9 +34,9 @@ def midas_data():
         resp.append(get_file_path(fpath))
 
     os.environ['MIDAS_DATA_DIR'] = opj(mini_ceda_archive,
-                                           midas_data_dir)
+                                       midas_data_dir)
     return resp
-        
+
 
 @pytest.fixture
 def midas_metadata():
@@ -47,8 +47,6 @@ def midas_metadata():
         print(f'Getting: {mpath}')
         resp.append(get_file_path(mpath))
 
-    os.environ['MIDAS_METADATA_DIR'] = opj(mini_ceda_archive, 
-                                               midas_metadata_dir)
+    os.environ['MIDAS_METADATA_DIR'] = opj(mini_ceda_archive,
+                                           midas_metadata_dir)
     return resp
-
-

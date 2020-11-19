@@ -1,9 +1,6 @@
-import os
-import pytest
-
 from pywps.tests import assert_response_success
 
-from .common import get_output, run_with_inputs, check_for_output_file
+from .common import run_with_inputs, check_for_output_file
 from goldfinch.processes.wps_get_weather_stations import GetWeatherStations
 
 
@@ -50,4 +47,3 @@ def test_wps_get_weather_stations_start_end_fail(midas_metadata):
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert "ExceptionReport" in resp.response[0].decode('utf-8')
-

@@ -6,8 +6,7 @@ from goldfinch.time_split import DurationSplitter
 
 from midas_extract.stations import StationIDGetter
 from midas_extract.subsetter import MIDASSubsetter
-from midas_extract.vocabs import (UK_COUNTIES, DATA_TYPES, TABLE_NAMES, 
-                                  MIDAS_CATALOGUE_DICT)
+from midas_extract.vocabs import UK_COUNTIES
 
 
 WEATHER_STATIONS_FILE_NAME = 'weather_stations.txt'
@@ -45,8 +44,8 @@ def get_station_list(counties, bbox, start, end, output_file, data_type=None):
     return station_getter.st_list
 
 
-def filter_observations(table_name, output_path, start=None, end=None, columns="all", 
-                        conditions=None, src_ids=None, region=None, delimiter="default", 
+def filter_observations(table_name, output_path, start=None, end=None, columns="all",
+                        conditions=None, src_ids=None, region=None, delimiter="default",
                         tmp_dir=None, verbose=False):
     """
     Wrapper to call to observation subsetter class.
@@ -65,22 +64,21 @@ def filter_observations(table_name, output_path, start=None, end=None, columns="
         verbose (int, optional): [description]. Defaults to 1.
     """
 
-    return MIDASSubsetter(table_name, output_path, startTime=revert_datetime_to_long_string(start), 
-                          endTime=revert_datetime_to_long_string(end), columns=columns, 
-                          conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter, 
+    return MIDASSubsetter(table_name, output_path, startTime=revert_datetime_to_long_string(start),
+                          endTime=revert_datetime_to_long_string(end), columns=columns,
+                          conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter,
                           tmp_dir=tmp_dir, verbose=verbose)
 
 
-def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, columns="all", 
-                        conditions=None, src_ids=None, region=None, delimiter="default", 
-                        chunk_rule=None, tmp_dir=None, verbose=False):
+def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, columns="all",
+                             conditions=None, src_ids=None, region=None, delimiter="default",
+                             chunk_rule=None, tmp_dir=None, verbose=False):
     """
     Loops through time chunks extracting data to files in required time chunks.
 
-    If `chunk_rule` is None, then do not split, just forward to 
+    If `chunk_rule` is None, then do not split, just forward to
     `filter_observations()`.
 
-    We pass the context object through here so that we can report progress.
     Returns a list of output file paths produced.
     """
     start_hr_min = start[8:12]
@@ -103,7 +101,7 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
     for count, (start_date, end_date) in enumerate(time_splits):
 
         # Add appropriate hours and minutes to date strings to make 12 character times
-        if first_date == True:
+        if first_date:
             start = "%s%s" % (start_date.date, start_hr_min)
             first_date = False
         else:
@@ -119,12 +117,11 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
         output_file_paths.append(output_file_path)
 
         # Call subsetter to extract and write the data
-        filter_observations(table_name, output_file_path, start=start, end=end, columns=columns,
-                            conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter, 
+        filter_observations(table_name, output_file_path, start=start, end=end,
+                            columns=columns, conditions=conditions,
+                            src_ids=src_ids, region=region, delimiter=delimiter,
                             tmp_dir=tmp_dir, verbose=verbose)
-
-        # Report on progress
-        progress = int(float(count) / len(time_splits) * 100)
+        # progress = int(float(count) / len(time_splits) * 100)
 
     return output_file_paths
 
@@ -138,15 +135,17 @@ def revert_datetime_to_long_string(dt):
 
 def validate_inputs(inputs, defaults=None, required=None):
     """
-    Receive inputs dictionary, process it, perform validations and 
+    Receive inputs dictionary, process it, perform validations and
     return a new dictionary.
 
     Also sets defaults for values based on dictionary of `defaults`.
-    
+
     You can set `required` as a sequence of keys that must exist.
     """
-    if not defaults: defaults = {}
-    if not required: required = []
+    if not defaults:
+        defaults = {}
+    if not required:
+        required = []
 
     req_not_present = []
 
@@ -162,7 +161,7 @@ def validate_inputs(inputs, defaults=None, required=None):
 
     if 'counties' in inputs:
         resp['counties'] = [_ for _ in inputs['counties'][0].data.split(',')]
-        
+
         if not set(UK_COUNTIES).issuperset(set(resp['counties'])):
             raise ProcessError(f'Counties must be valid UK counties, not: {resp["counties"]}.')
     else:
@@ -170,6 +169,11 @@ def validate_inputs(inputs, defaults=None, required=None):
 
     if 'obs_table' in inputs:
         resp['obs_table'] = inputs['obs_table'][0].data
+
+    if 'station_ids' in inputs:
+        resp['station_ids'] = [s_id for s_id in inputs['station_ids'][0].data.split(',')]
+    else:
+        resp['station_ids'] = []
 
     if 'bbox' in inputs:
         resp['bbox'] = inputs['bbox'][0].data
@@ -196,12 +200,15 @@ def validate_inputs(inputs, defaults=None, required=None):
         if not resp.get(key, None):
             resp[key] = value
 
-    if resp['counties'] == [] and resp['bbox'] == None and \
-        resp.get('station_ids', []) == [] and \
-        not resp.get('input_job_id'):
-        raise Exception('Invalid arguments provided. Must provide one of (i) a geographical bounding box, (ii) a list of counties,'
-                        ' (iii) a set of station IDs or (iv) an input job ID from which a file containing a set of selected station'
-                        ' IDs can be extracted.')
+    if resp['counties'] == [] and resp['bbox'] is None and \
+            resp.get('station_ids', []) == [] and \
+            not resp.get('input_job_id'):
+
+        msg = ('Invalid arguments provided. Must provide one of (i) a geographical '
+               'bounding box, (ii) a list of counties, (iii) a set of station IDs '
+               'or (iv) an input job ID from which a file containing a set of '
+               'selected station IDs can be extracted.')
+        raise Exception(msg)
 
     if resp['start'] > resp['end']:
         raise Exception('Invalid arguments provided. Start cannot be after end date/time.')
@@ -215,4 +222,4 @@ def locate_process_dir(job_id):
 
 def read_from_file(fpath, converter=str):
     with open(fpath) as reader:
-        return [dtype(_) for _ in reader.read().strip().split()]
+        return [converter(_) for _ in reader.read().strip().split()]

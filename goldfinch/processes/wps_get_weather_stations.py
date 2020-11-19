@@ -5,6 +5,7 @@ from pywps import FORMATS
 
 from pywps.app.Common import Metadata
 
+from midas_extract.vocabs import DATA_TYPES
 from goldfinch.util import get_station_list, validate_inputs, WEATHER_STATIONS_FILE_NAME
 
 import logging
@@ -25,7 +26,7 @@ class GetWeatherStations(Process):
                          default='2018-02-25T12:00:00Z'),
             BoundingBoxInput('bbox', 'Bounding Box',
                              abstract='The spatial bounding box within which to search for weather stations.'
-                                       ' This input will be ignored if counties are provided.',
+                                      ' This input will be ignored if counties are provided.',
                              crss=['-12.0, 49.0, 3.0, 61.0,epsg:4326x'],
                              min_occurs=0,
                              max_occurs=1),
@@ -42,6 +43,7 @@ class GetWeatherStations(Process):
                          min_occurs=0),
             LiteralInput('datatypes', 'Data Types',
                          data_type='string',
+                         allowed_values=DATA_TYPES,
                          min_occurs=0)
         ]
         outputs = [
@@ -77,7 +79,7 @@ class GetWeatherStations(Process):
     def _handler(self, request, response):
         # Now set status to started
         response.update_status('Job is now running', 0)
- 
+
         inputs = validate_inputs(request.inputs)
 
         # Add output file
