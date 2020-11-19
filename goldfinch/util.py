@@ -6,7 +6,8 @@ from goldfinch.time_split import DurationSplitter
 
 from midas_extract.stations import StationIDGetter
 from midas_extract.subsetter import MIDASSubsetter
-from midas_extract.vocabs import UK_COUNTIES, DATA_TYPES, TABLE_NAMES
+from midas_extract.vocabs import (UK_COUNTIES, DATA_TYPES, TABLE_NAMES, 
+                                  MIDAS_CATALOGUE_DICT)
 
 
 WEATHER_STATIONS_FILE_NAME = 'weather_stations.txt'
