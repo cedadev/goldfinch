@@ -1,9 +1,11 @@
 import os
+import dateutil.parser as dp
+import pandas
 import pytest
 
 from pywps.tests import assert_response_success
 
-from .common import get_output, run_with_inputs, check_for_output_file
+from .common import get_output, run_with_inputs
 from goldfinch.processes.wps_extract_uk_station_data import ExtractUKStationData
 
 data_inputs = ['obs_table=TD;counties=devon;start=2017-01-01T00:00:00;end=2019-01-31T00:00:00',
