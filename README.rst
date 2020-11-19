@@ -35,10 +35,10 @@ https://github.com/cedadev/goldfinch/issues
 Quick Start
 -----------
 
-```
-make install
-make start
-```
+::
+
+   make install
+   make start
 
 Contributing
 ------------
