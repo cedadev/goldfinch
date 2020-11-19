@@ -106,8 +106,8 @@ class ExtractUKStationData(Process):
                      ' Please see the disclaimer.',
             keywords=['stations', 'uk', 'extract', 'observations', 'data'],
             metadata=[
-                Metadata('User Guide', 'http://badc.nerc.ac.uk/data/ukmo-midas/WPS.html'),
-                Metadata('CEDA WPS', 'https://ceda-wps.jasmin.ac.uk'),
+                Metadata('CEDA WPS UI', 'https://ceda-wps-ui.ceda.ac.uk'),
+                Metadata('CEDA WPS', 'https://ceda-wps.ceda.ac.uk'),
                 Metadata('Disclaimer' 'https://help.ceda.ac.uk/article/4642-disclaimer')
             ],
             version='2.0.0',

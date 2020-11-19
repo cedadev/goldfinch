@@ -63,8 +63,8 @@ class GetWeatherStations(Process):
                      ' Please see the disclaimer.',
             keywords=['stations', 'uk', 'demo', 'weather', 'observations'],
             metadata=[
-                Metadata('User Guide', 'https://goldfinch.readthedocs.io'),
-                Metadata('CEDA WPS', '****TO BE ADDED*****'),
+                Metadata('CEDA WPS UI', 'https://ceda-wps-ui.ceda.ac.uk'),
+                Metadata('Goldfinch WPS User Guide', 'https://goldfinch.readthedocs.io'),
                 Metadata('Disclaimer' 'https://help.ceda.ac.uk/article/4642-disclaimer')
             ],
             version='2.0.0',

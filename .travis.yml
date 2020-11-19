@@ -46,6 +46,7 @@ script:
   - pytest
   - make test-notebooks
   - flake8
+  - conda install pandoc nbconvert
   - make docs  # default html
   - make SPHINXOPTS='-b epub' docs  # to match RtD
   - make SPHINXOPTS='-b latex' docs  # to match RtD

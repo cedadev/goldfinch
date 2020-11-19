@@ -7,9 +7,17 @@ Processes
     :local:
     :depth: 1
 
-Say Hello
----------
+Extract UK Station Data
+-----------------------
 
-.. autoprocess:: goldfinch.processes.wps_say_hello.SayHello
+.. autoprocess:: goldfinch.processes.wps_extract_uk_station_data.ExtractUKStationData
    :docstring:
    :skiplines: 1
+
+Get Weather Stations
+--------------------
+
+.. autoprocess:: goldfinch.processes.wps_get_weather_stations.GetWeatherStations
+   :docstring:
+   :skiplines: 1
+
