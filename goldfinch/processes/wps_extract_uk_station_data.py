@@ -1,12 +1,12 @@
 import os.path
 
-from pywps import Process, LiteralInput, ComplexOutput, BoundingBoxInput, Format
-from pywps import FORMATS
+from pywps import Process, LiteralInput, ComplexOutput, BoundingBoxInput, FORMATS
 from pywps.app.Common import Metadata
 
+from midas_extract.vocabs import TABLE_NAMES
 from goldfinch.util import (get_station_list, validate_inputs, locate_process_dir,
-                            filter_obs_by_time_chunk, read_from_file, TABLE_NAMES,
-                            WEATHER_STATIONS_FILE_NAME)
+    filter_obs_by_time_chunk, read_from_file, WEATHER_STATIONS_FILE_NAME,
+    MIDAS_CATALOGUE_DICT)
 
 
 import logging
@@ -253,31 +253,11 @@ class ExtractUKStationData(Process):
     def _write_doc_links_file(self, doc_links_file, obs_table):
         "Write documentation links file."
 
-        midas_table_to_moles_dict = {
-            "WM":   "http://catalogue.ceda.ac.uk/uuid/a1f65a362c26c9fa667d98c431a1ad38",
-            "RH":   "http://catalogue.ceda.ac.uk/uuid/bbd6916225e7475514e17fdbf11141c1",
-            "CURS": "http://catalogue.ceda.ac.uk/uuid/7f76ab4a47ee107778e0a7e8a701ee77",
-            "ST":   "http://catalogue.ceda.ac.uk/uuid/8dc05f6ecc6065a5d10fc7b8829589ec",
-            "GL":   "http://catalogue.ceda.ac.uk/uuid/0ec59f09b3158829a059fe70b17de951",
-            "CUNS": "http://catalogue.ceda.ac.uk/uuid/bef3d059255a0feaa14eb78c77d7bc48",
-            "TMSL": "http://catalogue.ceda.ac.uk/uuid/33ca1887e5f116057340e404b2c752f2",
-            "RO":   "http://catalogue.ceda.ac.uk/uuid/b4c028814a666a651f52f2b37a97c7c7",
-            "MO":   "http://catalogue.ceda.ac.uk/uuid/77910bcec71c820d4c92f40d3ed3f249",
-            "RS":   "http://catalogue.ceda.ac.uk/uuid/455f0dd48613dada7bfb0ccfcb7a7d41",
-            "RD":   "http://catalogue.ceda.ac.uk/uuid/c732716511d3442f05cdeccbe99b8f90",
-            "CUNL": "http://catalogue.ceda.ac.uk/uuid/ec1d8e1e511838b9303921986a0137de",
-            "TD":   "http://catalogue.ceda.ac.uk/uuid/1bb479d3b1e38c339adb9c82c15579d8",
-            "SCLE": "http://catalogue.ceda.ac.uk/uuid/1d9aa0abc4e93fca1f91c8a187d46567",
-            "WD":   "http://catalogue.ceda.ac.uk/uuid/954d743d1c07d1dd034c131935db54e0",
-            "WH":   "http://catalogue.ceda.ac.uk/uuid/916ac4bbc46f7685ae9a5e10451bae7c",
-            "CURL": "http://catalogue.ceda.ac.uk/uuid/fe9a02b85b50d3ee1d0b7366355bb9d8"
-            }
-
-        if obs_table not in midas_table_to_moles_dict:
+        if obs_table not in MIDAS_CATALOGUE_DICT:
             return
 
         with open(doc_links_file, "w") as fout:
-            fout.write("Link to documentation: {}#tab_linked_docs\n".format(midas_table_to_moles_dict[obs_table]))
+            fout.write("Link to documentation: {}#tab_linked_docs\n".format(MIDAS_CATALOGUE_DICT[obs_table]))
 
         self.response.outputs['doc_links_file'].file = doc_links_file
 

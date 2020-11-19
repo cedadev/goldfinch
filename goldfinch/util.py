@@ -6,7 +6,7 @@ from goldfinch.time_split import DurationSplitter
 
 from midas_extract.stations import StationIDGetter
 from midas_extract.subsetter import MIDASSubsetter
-from midas_extract.vocabs import UK_COUNTIES, DATA_TYPES, TABLE_NAMES
+from midas_extract.vocabs import UK_COUNTIES
 
 
 WEATHER_STATIONS_FILE_NAME = 'weather_stations.txt'
@@ -79,7 +79,6 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
     If `chunk_rule` is None, then do not split, just forward to
     `filter_observations()`.
 
-    We pass the context object through here so that we can report progress.
     Returns a list of output file paths produced.
     """
     start_hr_min = start[8:12]
@@ -118,12 +117,11 @@ def filter_obs_by_time_chunk(table_name, output_path, start=None, end=None, colu
         output_file_paths.append(output_file_path)
 
         # Call subsetter to extract and write the data
-        filter_observations(table_name, output_file_path, start=start, end=end, columns=columns,
-                            conditions=conditions, src_ids=src_ids, region=region, delimiter=delimiter,
+        filter_observations(table_name, output_file_path, start=start, end=end,
+                            columns=columns, conditions=conditions,
+                            src_ids=src_ids, region=region, delimiter=delimiter,
                             tmp_dir=tmp_dir, verbose=verbose)
-
-        # Report on progress
-        progress = int(float(count) / len(time_splits) * 100)
+        # progress = int(float(count) / len(time_splits) * 100)
 
     return output_file_paths
 
@@ -144,8 +142,10 @@ def validate_inputs(inputs, defaults=None, required=None):
 
     You can set `required` as a sequence of keys that must exist.
     """
-    if not defaults: defaults = {}
-    if not required: required = []
+    if not defaults:
+        defaults = {}
+    if not required:
+        required = []
 
     req_not_present = []
 
@@ -201,11 +201,14 @@ def validate_inputs(inputs, defaults=None, required=None):
             resp[key] = value
 
     if resp['counties'] == [] and resp['bbox'] is None and \
-       resp.get('station_ids', []) == [] and \
-       not resp.get('input_job_id'):
-        raise Exception('Invalid arguments provided. Must provide one of (i) a geographical bounding box, (ii) a list of counties,'
-                        ' (iii) a set of station IDs or (iv) an input job ID from which a file containing a set of selected station'
-                        ' IDs can be extracted.')
+        resp.get('station_ids', []) == [] and \
+        not resp.get('input_job_id'):
+
+        msg = ('Invalid arguments provided. Must provide one of (i) a geographical '
+               'bounding box, (ii) a list of counties, (iii) a set of station IDs '
+               'or (iv) an input job ID from which a file containing a set of '
+               'selected station IDs can be extracted.')
+        raise Exception(msg)
 
     if resp['start'] > resp['end']:
         raise Exception('Invalid arguments provided. Start cannot be after end date/time.')

@@ -5,6 +5,7 @@ from pywps import FORMATS
 
 from pywps.app.Common import Metadata
 
+from midas_extract.vocabs import DATA_TYPES
 from goldfinch.util import get_station_list, validate_inputs, WEATHER_STATIONS_FILE_NAME
 
 import logging
@@ -42,6 +43,7 @@ class GetWeatherStations(Process):
                          min_occurs=0),
             LiteralInput('datatypes', 'Data Types',
                          data_type='string',
+                         allowed_values=DATA_TYPES,
                          min_occurs=0)
         ]
         outputs = [

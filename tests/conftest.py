@@ -1,12 +1,12 @@
 import os
-opj = os.path.join
-import shutil
 import pytest
 from pathlib import Path
 
 from midas_extract.testing import get_file_path
 
+opj = os.path.join
 home = Path.home()
+
 mini_ceda_archive = opj(home.as_posix(), '.mini_ceda_archive', 'archive')
 midas_data_dir = opj('badc', 'ukmo-midas', 'data')
 midas_metadata_dir = opj('badc', 'ukmo-midas', 'metadata')
