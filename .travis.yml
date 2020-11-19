@@ -34,6 +34,7 @@ install:
   # Update now the env with our environment
   - conda env update -f environment.yml
   - source activate goldfinch
+  - pip install git+https://github.com/geopython/pywps@pywps-4.2
   # Packages for testing, generating docs and installing WPS
   - make develop
 before_script:
