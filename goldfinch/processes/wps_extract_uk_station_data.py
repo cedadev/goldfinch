@@ -4,9 +4,10 @@ from pywps import Process, LiteralInput, ComplexOutput, BoundingBoxInput, FORMAT
 from pywps.app.Common import Metadata
 
 from midas_extract.vocabs import TABLE_NAMES
+
 from goldfinch.util import (get_station_list, validate_inputs, locate_process_dir,
-    filter_obs_by_time_chunk, read_from_file, WEATHER_STATIONS_FILE_NAME,
-    MIDAS_CATALOGUE_DICT)
+                            filter_obs_by_time_chunk, read_from_file,
+                            WEATHER_STATIONS_FILE_NAME, MIDAS_CATALOGUE_DICT)
 
 
 import logging

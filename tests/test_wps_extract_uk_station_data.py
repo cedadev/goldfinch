@@ -1,5 +1,4 @@
 import dateutil.parser as dp
-import os
 import pandas
 import pytest
 import re

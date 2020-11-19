@@ -201,8 +201,8 @@ def validate_inputs(inputs, defaults=None, required=None):
             resp[key] = value
 
     if resp['counties'] == [] and resp['bbox'] is None and \
-        resp.get('station_ids', []) == [] and \
-        not resp.get('input_job_id'):
+            resp.get('station_ids', []) == [] and \
+            not resp.get('input_job_id'):
 
         msg = ('Invalid arguments provided. Must provide one of (i) a geographical '
                'bounding box, (ii) a list of counties, (iii) a set of station IDs '
