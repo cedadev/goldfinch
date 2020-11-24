@@ -10,6 +10,7 @@ from midas_extract.vocabs import UK_COUNTIES
 
 
 WEATHER_STATIONS_FILE_NAME = 'weather_stations.txt'
+DEFAULT_DATE_RANGE = '1850-01-01/2020-10-31'
 
 
 def translate_bbox(wps_bbox):
@@ -144,6 +145,7 @@ def validate_inputs(inputs, defaults=None, required=None):
     """
     if not defaults:
         defaults = {}
+
     if not required:
         required = []
 
@@ -192,8 +194,11 @@ def validate_inputs(inputs, defaults=None, required=None):
         resp['delimiter'] = inputs['delimiter'][0].data
 
     # Fix datetimes
-    for dt in ('start', 'end'):
-        resp[dt] = revert_datetime_to_long_string(inputs[dt][0].data)
+    if 'DateRange' in inputs:
+        resp['start'], resp['end'] = inputs['DateRange'][0].data.split('/')
+
+        for dt in ('start', 'end'):
+            resp[dt] = revert_datetime_to_long_string(resp[dt])
 
     # Add default values for those inputs not set
     for key, value in defaults.items():

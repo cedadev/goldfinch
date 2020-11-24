@@ -8,17 +8,17 @@ from pywps.tests import assert_response_success
 from .common import get_output, run_with_inputs
 from goldfinch.processes.wps_extract_uk_station_data import ExtractUKStationData
 
-data_inputs = ['obs_table=TD;delimiter=tab;counties=devon;start=2017-01-01T00:00:00;end=2019-01-31T00:00:00',
-               'obs_table=TD;counties=surrey;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00',
-               'obs_table=TD;counties=surrey;start=2017-11-07T00:00:00;end=2019-03-15T00:00:00',
-               'obs_table=TD;counties=devon,kent,surrey;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00',
-               'obs_table=TD;counties=isle of wight;start=2017-11-07T00:00:00;end=2019-03-15T00:00:00',
-               'obs_table=TD;counties=devon;start=2017-11-06T00:12:00;end=2019-01-15T00:12:00',
-               'obs_table=TD;counties=powys (north),powys (south);start=2017-11-06T00:12:00;end=2019-01-15T00:12:00',
-               'obs_table=TD;counties=surrey;start=2017-11-07T00:00:00;end=2019-03-15T00:00:00',
-               'obs_table=TD;bbox=0,4,50,55,urn:ogc:def:crs:EPSG:6.6:4326,2;start=2017-10-01T00:00:00;'
-               'end=2018-01-31T00:00:00',
-               'obs_table=TD;delimiter=tab;bbox=-5,-23,41,64;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00']
+data_inputs = ['obs_table=TD;delimiter=tab;counties=devon;DateRange=2017-01-01/2019-01-31',
+               'obs_table=TD;counties=surrey;DateRange=2017-10-01/2018-01-31',
+               'obs_table=TD;counties=surrey;DateRange=2017-11-07/2019-03-15',
+               'obs_table=TD;counties=devon,kent,surrey;DateRange=2017-10-01/2018-01-31',
+               'obs_table=TD;counties=isle of wight;DateRange=2017-11-07/2019-03-15',
+               'obs_table=TD;counties=devon;DateRange=2017-11-06/2019-01-15',
+               'obs_table=TD;counties=powys (north),powys (south);DateRange=2017-11-06/2019-01-15',
+               'obs_table=TD;counties=surrey;DateRange=2017-11-07/2019-03-15',
+               'obs_table=TD;bbox=0,4,50,55,urn:ogc:def:crs:EPSG:6.6:4326,2;DateRange=2017-10-01'
+                   '/2018-01-31',
+               'obs_table=TD;delimiter=tab;bbox=-5,-23,41,64;DateRange=2017-10-01/2018-01-31']
 
 station_inputs = ['56810', '17101,1007', '1039,57199,1144']
 
@@ -40,15 +40,15 @@ def test_wps_extract_uk_station_data_no_params_fail(midas_metadata, midas_data):
 #       Exception Report returned by the server
 @pytest.mark.skip
 def test_wps_extract_uk_station_data_no_table_fail(midas_metadata, midas_data):
-    datainputs = "counties=devon;start=2017-10-01T00:00:00;end=2018-01-31T00:00:00"
+    datainputs = "counties=devon;DateRange=2017-10-01/2018-01-31"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
     assert "please provide: ['obs_table']" in resp.response[0].decode('utf-8')
 
 
 def test_wps_extract_uk_station_data_empty_bbox_fail(midas_metadata, midas_data):
-    datainputs = "obs_table=TD;bbox=0,0,10,10,urn:ogc:def:crs:EPSG:6.6:4326,2;start=2017-10-01T00:00:00;" \
-                 "end=2018-01-31T00:00:00"
+    datainputs = "obs_table=TD;bbox=0,0,10,10,urn:ogc:def:crs:EPSG:6.6:4326,2;DateRange=2017-10-01/" \
+                 "2018-01-31"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
     assert "ExceptionReport" in resp.response[0].decode('utf-8')
@@ -65,7 +65,6 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
     # added delimeter finder
     delimiter_dict = {
         'comma': ',',
-        ',': ',',
         'tab': '\t'
     }
     del_pattern = re.compile('^delimiter=.*$')
@@ -79,11 +78,14 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
     output_file = _extract_filepath(output['output'])
     df = pandas.read_csv(output_file, skipinitialspace=True, sep=delimiter_dict[given_del])
 
-    start_pattern = re.compile('^start=.*$')
-    start = dp.isoparse([inp for inp in input_list if start_pattern.match(inp)][0][6:])
+    # start_pattern = re.compile('^start=.*$')
+    # start = dp.isoparse([inp for inp in input_list if start_pattern.match(inp)][0][6:])
 
-    end_pattern = re.compile('^end=.*$')
-    end = dp.isoparse([inp for inp in input_list if end_pattern.match(inp)][0][4:])
+    # end_pattern = re.compile('^end=.*$')
+    # end = dp.isoparse([inp for inp in input_list if end_pattern.match(inp)][0][4:])
+
+    date_range = [inp for inp in input_list if inp.startswith('DateRange=')][0].split('=')[1]
+    start, end = [dp.isoparse(dt) for dt in date_range.split('/')]
 
     dates = list(map(dp.isoparse, df['ob_end_time'].tolist()))
     assert all(date >= start and date <= end for date in dates)
@@ -94,7 +96,7 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
 
 @pytest.mark.parametrize('station_ids', station_inputs)
 def test_wps_extract_uk_station_id_match_csv(midas_metadata, midas_data, station_ids):
-    datainputs = f"obs_table=TD;station_ids={station_ids};start=2017-01-01T00:00:00;end=2019-10-02T00:00:00"
+    datainputs = f"obs_table=TD;station_ids={station_ids};DateRange=2017-01-01/2019-10-02"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
     assert_response_success(resp)

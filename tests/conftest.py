@@ -44,7 +44,6 @@ def midas_metadata():
 
     for mfile in metadata_files:
         mpath = opj(midas_metadata_dir, mfile)
-        print(f'Getting: {mpath}')
         resp.append(get_file_path(mpath))
 
     os.environ['MIDAS_METADATA_DIR'] = opj(mini_ceda_archive,

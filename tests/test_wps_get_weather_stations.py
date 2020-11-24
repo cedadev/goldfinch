@@ -34,16 +34,16 @@ def test_wps_get_weather_stations_bbox(midas_metadata):
     check_for_output_file(resp, 'weather_stations.txt')
 
 
-def test_wps_get_weather_stations_start_end_success(midas_metadata):
-    datainputs = "start=2017-10-10T00:00:00;end=2018-02-03T12:00:00;counties=cornwall"
+def test_wps_get_weather_stations_DateRange_success(midas_metadata):
+    datainputs = "DateRange=2017-10-10/2018-02-03;counties=cornwall"
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert_response_success(resp)
     check_for_output_file(resp, 'weather_stations.txt')
 
 
-def test_wps_get_weather_stations_start_end_fail(midas_metadata):
-    datainputs = "start=2018-02-03T12:00:00;end=2017-10-10T00:00:00;counties=cornwall"
+def test_wps_get_weather_stations_DateRange_fail(midas_metadata):
+    datainputs = "DateRange=2018-02-03/2017-10-10;counties=cornwall"
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert "ExceptionReport" in resp.response[0].decode('utf-8')

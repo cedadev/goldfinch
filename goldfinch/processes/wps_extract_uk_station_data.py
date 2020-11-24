@@ -3,11 +3,11 @@ import os.path
 from pywps import Process, LiteralInput, ComplexOutput, BoundingBoxInput, FORMATS
 from pywps.app.Common import Metadata
 
-from midas_extract.vocabs import TABLE_NAMES, MIDAS_CATALOGUE_DICT
+from midas_extract.vocabs import TABLE_NAMES, MIDAS_CATALOGUE_DICT, UK_COUNTIES
 
 from goldfinch.util import (get_station_list, validate_inputs, locate_process_dir,
                             filter_obs_by_time_chunk, read_from_file,
-                            WEATHER_STATIONS_FILE_NAME)
+                            WEATHER_STATIONS_FILE_NAME, DEFAULT_DATE_RANGE)
 
 
 import logging
@@ -25,20 +25,26 @@ class ExtractUKStationData(Process):
                          allowed_values=TABLE_NAMES,
                          min_occurs=0,
                          max_occurs=1),
-            LiteralInput('start', 'Start Date Time',
-                         abstract='The first date/time for which to search for operating weather stations.',
-                         data_type='dateTime',
-                         default='2017-10-01T12:00:00Z'),
-            LiteralInput('end', 'End Date Time',
-                         abstract='The last date/time for which to search for operating weather stations.',
-                         data_type='dateTime',
-                         default='2018-02-25T12:00:00Z'),
+            # LiteralInput('start', 'Start Date Time',
+            #              abstract='The first date/time for which to search for operating weather stations.',
+            #              data_type='dateTime',
+            #              default='2017-10-01T12:00:00Z'),
+            # LiteralInput('end', 'End Date Time',
+            #              abstract='The last date/time for which to search for operating weather stations.',
+            #              data_type='dateTime',
+            #              default='2018-02-25T12:00:00Z'),
+            LiteralInput('DateRange', 'Date Range',
+                         abstract='The date range to search for station data.',
+                         data_type='string',
+                         default=DEFAULT_DATE_RANGE,
+                         min_occurs=0,
+                         max_occurs=1),
             BoundingBoxInput('bbox', 'Bounding Box',
-                             abstract='The spatial bounding box within which to search for weather stations.'
-                                      ' This input will be ignored if counties are provided.',
-                             crss=['-12.0, 49.0, 3.0, 61.0,epsg:4326x'],
-                             min_occurs=0,
-                             max_occurs=1),
+                         abstract='The spatial bounding box within which to search for station data.'
+                                  ' This input will be ignored if counties are provided.',
+                         crss=['-12.0, 49.0, 3.0, 61.0,epsg:4326x'],
+                         min_occurs=0,
+                         max_occurs=1),
             # LiteralInput('bbox', 'Bounding Box',
             #              abstract='The spatial bounding box within which to search for weather stations.'
             #              ' This input will be ignored if counties are provided.'
@@ -49,6 +55,7 @@ class ExtractUKStationData(Process):
             LiteralInput('counties', 'Counties',
                          abstract='A list of counties within which to search for weather stations.',
                          data_type='string',
+                         allowed_values=UK_COUNTIES,
                          min_occurs=0,
                          max_occurs=1),
             LiteralInput('station_ids', 'Station Source IDs',
@@ -71,7 +78,7 @@ class ExtractUKStationData(Process):
             LiteralInput('delimiter', 'Delimiter',
                          abstract='The delimiter to be used in the output files.',
                          data_type='string',
-                         allowed_values=['comma', ',', 'tab'],
+                         allowed_values=['comma', 'tab'],
                          default='comma',
                          min_occurs=0,
                          max_occurs=1),
@@ -132,7 +139,7 @@ class ExtractUKStationData(Process):
                           'chunk_rule': None, 'delimiter': 'comma'}
 
         inputs = validate_inputs(request.inputs, defaults=input_defaults,
-                                 required=['obs_table', 'start', 'end'])
+                                 required=['obs_table', 'DateRange'])
 
         # Resolve the list of stations
         stations_file = WEATHER_STATIONS_FILE_NAME

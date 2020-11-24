@@ -5,8 +5,9 @@ from pywps import FORMATS
 
 from pywps.app.Common import Metadata
 
-from midas_extract.vocabs import DATA_TYPES
-from goldfinch.util import get_station_list, validate_inputs, WEATHER_STATIONS_FILE_NAME
+from midas_extract.vocabs import DATA_TYPES, UK_COUNTIES
+from goldfinch.util import (get_station_list, validate_inputs, 
+    WEATHER_STATIONS_FILE_NAME, DEFAULT_DATE_RANGE)
 
 import logging
 LOGGER = logging.getLogger("PYWPS")
@@ -16,14 +17,20 @@ class GetWeatherStations(Process):
     """A process getting UK weather stations."""
     def __init__(self):
         inputs = [
-            LiteralInput('start', 'Start Date Time',
-                         abstract='The first date/time for which to search for operating weather stations.',
-                         data_type='dateTime',
-                         default='2017-10-01T12:00:00Z'),
-            LiteralInput('end', 'End Date Time',
-                         abstract='The last date/time for which to search for operating weather stations.',
-                         data_type='dateTime',
-                         default='2018-02-25T12:00:00Z'),
+            # LiteralInput('start', 'Start Date Time',
+            #              abstract='The first date/time for which to search for operating weather stations.',
+            #              data_type='dateTime',
+            #              default='2017-10-01T12:00:00Z'),
+            # LiteralInput('end', 'End Date Time',
+            #              abstract='The last date/time for which to search for operating weather stations.',
+            #              data_type='dateTime',
+            #              default='2018-02-25T12:00:00Z'),
+            LiteralInput('DateRange', 'Date Range',
+                          abstract='The date range to search for operating weather stations.',
+                          data_type='string',
+                          default=DEFAULT_DATE_RANGE,
+                          min_occurs=0,
+                          max_occurs=1),
             BoundingBoxInput('bbox', 'Bounding Box',
                              abstract='The spatial bounding box within which to search for weather stations.'
                                       ' This input will be ignored if counties are provided.',
@@ -40,7 +47,9 @@ class GetWeatherStations(Process):
             LiteralInput('counties', 'Counties',
                          abstract='A list of counties within which to search for weather stations.',
                          data_type='string',
-                         min_occurs=0),
+                         allowed_values=UK_COUNTIES,
+                         min_occurs=0,
+                         max_occurs=1),
             LiteralInput('datatypes', 'Data Types',
                          data_type='string',
                          allowed_values=DATA_TYPES,
@@ -80,7 +89,8 @@ class GetWeatherStations(Process):
         # Now set status to started
         response.update_status('Job is now running', 0)
 
-        inputs = validate_inputs(request.inputs)
+        inputs = validate_inputs(request.inputs, 
+            defaults={'DateRange': DEFAULT_DATE_RANGE})
 
         # Add output file
         stations_file = os.path.join(self.workdir, WEATHER_STATIONS_FILE_NAME)
