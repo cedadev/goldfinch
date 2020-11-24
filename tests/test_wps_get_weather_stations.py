@@ -1,3 +1,5 @@
+import pytest
+
 from pywps.tests import assert_response_success
 
 from .common import run_with_inputs, check_for_output_file
@@ -12,7 +14,16 @@ def test_wps_get_weather_stations_no_params_fail(midas_metadata):
 
 
 def test_wps_get_weather_stations_counties_success(midas_metadata):
-    datainputs = "counties=cornwall,devon"
+    datainputs = "counties=cornwall;counties=devon"
+    resp = run_with_inputs(GetWeatherStations, datainputs)
+
+    assert_response_success(resp)
+    check_for_output_file(resp, 'weather_stations.txt')
+
+
+@pytest.mark.xfail
+def test_wps_get_weather_stations_counties_split_by_bar_success(midas_metadata):
+    datainputs = "counties=cornwall|devon"
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert_response_success(resp)

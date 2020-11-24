@@ -162,7 +162,7 @@ def validate_inputs(inputs, defaults=None, required=None):
     resp = copy.deepcopy(inputs)
 
     if 'counties' in inputs:
-        resp['counties'] = [_ for _ in inputs['counties'][0].data.split(',')]
+        resp['counties'] = [_.data for _ in inputs['counties']]
 
         if not set(UK_COUNTIES).issuperset(set(resp['counties'])):
             raise ProcessError(f'Counties must be valid UK counties, not: {resp["counties"]}.')

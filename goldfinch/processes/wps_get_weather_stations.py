@@ -49,7 +49,7 @@ class GetWeatherStations(Process):
                          data_type='string',
                          allowed_values=UK_COUNTIES,
                          min_occurs=0,
-                         max_occurs=1),
+                         max_occurs=len(UK_COUNTIES)),
             LiteralInput('datatypes', 'Data Types',
                          data_type='string',
                          allowed_values=DATA_TYPES,

@@ -57,7 +57,7 @@ class ExtractUKStationData(Process):
                          data_type='string',
                          allowed_values=UK_COUNTIES,
                          min_occurs=0,
-                         max_occurs=1),
+                         max_occurs=len(UK_COUNTIES)),
             LiteralInput('station_ids', 'Station Source IDs',
                          abstract='A list of weather stations source IDs.'
                                   ' This input will be ignored if an input job ID is provided.',

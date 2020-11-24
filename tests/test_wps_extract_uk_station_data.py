@@ -11,10 +11,10 @@ from goldfinch.processes.wps_extract_uk_station_data import ExtractUKStationData
 data_inputs = ['obs_table=TD;delimiter=tab;counties=devon;DateRange=2017-01-01/2019-01-31',
                'obs_table=TD;counties=surrey;DateRange=2017-10-01/2018-01-31',
                'obs_table=TD;counties=surrey;DateRange=2017-11-07/2019-03-15',
-               'obs_table=TD;counties=devon,kent,surrey;DateRange=2017-10-01/2018-01-31',
+               'obs_table=TD;counties=devon;counties=kent;counties=surrey;DateRange=2017-10-01/2018-01-31',
                'obs_table=TD;counties=isle of wight;DateRange=2017-11-07/2019-03-15',
                'obs_table=TD;counties=devon;DateRange=2017-11-06/2019-01-15',
-               'obs_table=TD;counties=powys (north),powys (south);DateRange=2017-11-06/2019-01-15',
+               'obs_table=TD;counties=powys (north);counties=powys (south);DateRange=2017-11-06/2019-01-15',
                'obs_table=TD;counties=surrey;DateRange=2017-11-07/2019-03-15',
                'obs_table=TD;bbox=0,4,50,55,urn:ogc:def:crs:EPSG:6.6:4326,2;DateRange=2017-10-01'
                    '/2018-01-31',
