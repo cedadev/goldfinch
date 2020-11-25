@@ -14,7 +14,7 @@ def test_wps_get_weather_stations_no_params_fail(midas_metadata):
 
 
 def test_wps_get_weather_stations_counties_success(midas_metadata):
-    datainputs = "counties=cornwall;counties=devon"
+    datainputs = "counties=CORNWALL;counties=DEVON"
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert_response_success(resp)
@@ -23,7 +23,7 @@ def test_wps_get_weather_stations_counties_success(midas_metadata):
 
 @pytest.mark.xfail
 def test_wps_get_weather_stations_counties_split_by_bar_success(midas_metadata):
-    datainputs = "counties=cornwall|devon"
+    datainputs = "counties=CORNWALL|DEVON"
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert_response_success(resp)
@@ -46,7 +46,7 @@ def test_wps_get_weather_stations_bbox(midas_metadata):
 
 
 def test_wps_get_weather_stations_DateRange_success(midas_metadata):
-    datainputs = "DateRange=2017-10-10/2018-02-03;counties=cornwall"
+    datainputs = "DateRange=2017-10-10/2018-02-03;counties=CORNWALL"
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert_response_success(resp)
@@ -54,7 +54,7 @@ def test_wps_get_weather_stations_DateRange_success(midas_metadata):
 
 
 def test_wps_get_weather_stations_DateRange_fail(midas_metadata):
-    datainputs = "DateRange=2018-02-03/2017-10-10;counties=cornwall"
+    datainputs = "DateRange=2018-02-03/2017-10-10;counties=CORNWALL"
     resp = run_with_inputs(GetWeatherStations, datainputs)
 
     assert "ExceptionReport" in resp.response[0].decode('utf-8')

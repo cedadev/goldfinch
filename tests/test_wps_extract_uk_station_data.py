@@ -8,14 +8,14 @@ from pywps.tests import assert_response_success
 from .common import get_output, run_with_inputs
 from goldfinch.processes.wps_extract_uk_station_data import ExtractUKStationData
 
-data_inputs = ['obs_table=TD;delimiter=tab;counties=devon;DateRange=2017-01-01/2019-01-31',
-               'obs_table=TD;counties=surrey;DateRange=2017-10-01/2018-01-31',
-               'obs_table=TD;counties=surrey;DateRange=2017-11-07/2019-03-15',
-               'obs_table=TD;counties=devon;counties=kent;counties=surrey;DateRange=2017-10-01/2018-01-31',
-               'obs_table=TD;counties=isle of wight;DateRange=2017-11-07/2019-03-15',
-               'obs_table=TD;counties=devon;DateRange=2017-11-06/2019-01-15',
-               'obs_table=TD;counties=powys (north);counties=powys (south);DateRange=2017-11-06/2019-01-15',
-               'obs_table=TD;counties=surrey;DateRange=2017-11-07/2019-03-15',
+data_inputs = ['obs_table=TD;delimiter=tab;counties=DEVON;DateRange=2017-01-01/2019-01-31',
+               'obs_table=TD;counties=SURREY;DateRange=2017-10-01/2018-01-31',
+               'obs_table=TD;counties=SURREY;DateRange=2017-11-07/2019-03-15',
+               'obs_table=TD;counties=DEVON;counties=KENT;counties=SURREY;DateRange=2017-10-01/2018-01-31',
+               'obs_table=TD;counties=ISLE OF WIGHT;DateRange=2017-11-07/2019-03-15',
+               'obs_table=TD;counties=DEVON;DateRange=2017-11-06/2019-01-15',
+               'obs_table=TD;counties=POWYS (NORTH);counties=POWYS (SOUTH);DateRange=2017-11-06/2019-01-15',
+               'obs_table=TD;counties=SURREY;DateRange=2017-11-07/2019-03-15',
                'obs_table=TD;bbox=0,4,50,55,urn:ogc:def:crs:EPSG:6.6:4326,2;DateRange=2017-10-01'
                    '/2018-01-31',
                'obs_table=TD;delimiter=tab;bbox=-5,-23,41,64;DateRange=2017-10-01/2018-01-31']
@@ -40,7 +40,7 @@ def test_wps_extract_uk_station_data_no_params_fail(midas_metadata, midas_data):
 #       Exception Report returned by the server
 @pytest.mark.skip
 def test_wps_extract_uk_station_data_no_table_fail(midas_metadata, midas_data):
-    datainputs = "counties=devon;DateRange=2017-10-01/2018-01-31"
+    datainputs = "counties=DEVON;DateRange=2017-10-01/2018-01-31"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
     assert "please provide: ['obs_table']" in resp.response[0].decode('utf-8')
