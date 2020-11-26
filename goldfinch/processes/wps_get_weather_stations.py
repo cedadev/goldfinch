@@ -53,7 +53,8 @@ class GetWeatherStations(Process):
             LiteralInput('datatypes', 'Data Types',
                          data_type='string',
                          allowed_values=DATA_TYPES,
-                         min_occurs=0)
+                         min_occurs=0,
+                         max_occurs=len(DATA_TYPES))
         ]
         outputs = [
             ComplexOutput('output', 'Output',

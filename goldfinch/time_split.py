@@ -37,9 +37,9 @@ class DurationSplitter:
     """
     Splits into sensible time chunks based on inputs.
     """
-    known_chunk_units = ["decade", "year", "month"]
+    known_chunk_units = [None, "decade", "year", "month"]
 
-    def __init__(self, chunk_unit="decade"):
+    def __init__(self, chunk_unit=None):
         """
         Allows the setting of a persistent chunk_unit.
         """
