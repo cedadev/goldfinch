@@ -3,7 +3,6 @@ import os
 import pathlib
 import pytest
 
-
 from pywps.tests import assert_response_success
 
 from .common import get_output, run_with_inputs, check_for_output_file
@@ -19,10 +18,12 @@ inputs = [inp[0] + inp[1] for inp in itertools.product(times, counties)]
 
 params = list(zip(file_names, inputs))
 
+
 def _extract_filepath(url):
     parts = url.split('/')
     path = '/tmp/' + '/'.join(parts[-2:])
     return path
+
 
 @pytest.mark.parametrize("file_name,param", params)
 def test_compare_weather_station_output_counties(file_name, param):
@@ -34,7 +35,7 @@ def test_compare_weather_station_output_counties(file_name, param):
 
     file_content = open(output_file).read()
     current_dir = pathlib.Path(__file__).parent.absolute()
-    wps_file_content = open(os.path.join(current_dir, 'ceda-wps-example-data', f'{file_name}.txt')).read()
+    wps_file_content = open(os.path.join(current_dir, 'ceda-wps-example-data', 'stations', f'{file_name}.txt')).read()
 
     assert file_content == wps_file_content
     
