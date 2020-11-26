@@ -67,6 +67,7 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
         'comma': ',',
         'tab': '\t'
     }
+    
     del_pattern = re.compile('^delimiter=.*$')
     given_del_list = [inp for inp in input_list if del_pattern.match(inp)]
 
