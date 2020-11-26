@@ -8,8 +8,8 @@ from pywps.tests import assert_response_success
 from .common import get_output, run_with_inputs, check_for_output_file
 from goldfinch.processes.wps_get_weather_stations import GetWeatherStations
 
-times = ['DateRange=2010-01-01/2010-12-31;', 'DateRange=2014-01-01/2014-12-31;',
-         'DateRange=2018-01-01/2018-12-31;']
+times = ['DateRange=2010-01-01/2011-01-01;', 'DateRange=2014-01-01/2015-01-01;',
+         'DateRange=2018-01-01/2019-01-01;']
 counties = ['counties=OXFORDSHIRE','counties=DEVON','counties=BERKSHIRE;counties=DORSET',
             'counties=YORKSHIRE;counties=SURREY;counties=HAMPSHIRE']
 
