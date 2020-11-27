@@ -37,6 +37,7 @@ def test_compare_extract_station_data_td(file_name, param):
 
     file_content = pandas.read_csv(output_file)
     current_dir = pathlib.Path(__file__).parent.absolute()
-    wps_file_content = pandas.read_csv(os.path.join(current_dir, 'ceda-wps-example-data', 'extract_data', f'{file_name}TD.csv'))
+    wps_file_content = pandas.read_csv(os.path.join(current_dir, 'ceda-wps-example-data',
+                                                    'extract_data', f'{file_name}TD.csv'))
 
-    assert file_content.equals(wps_file_content) 
+    assert file_content.equals(wps_file_content)
