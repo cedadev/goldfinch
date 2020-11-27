@@ -41,3 +41,21 @@ def test_compare_extract_station_data_td(file_name, param):
                                                     'extract_data', f'{file_name}TD.csv'))
 
     assert file_content.equals(wps_file_content)
+
+@pytest.mark.parametrize("file_name,param", params)
+def test_compare_extract_station_data_wd(file_name, param):
+    data_inputs = f'obs_table=WD;{param}'
+    resp = run_with_inputs(ExtractUKStationData, data_inputs)
+
+    assert_response_success(resp)
+    output = get_output(resp.xml)
+    output_file = _extract_filepath(output['output'])
+
+    import pdb; pdb.set_trace()
+
+    file_content = pandas.read_csv(output_file)
+    current_dir = pathlib.Path(__file__).parent.absolute()
+    wps_file_content = pandas.read_csv(os.path.join(current_dir, 'ceda-wps-example-data',
+                                                    'extract_data', f'{file_name}WD.csv'))
+
+    assert file_content.equals(wps_file_content)
