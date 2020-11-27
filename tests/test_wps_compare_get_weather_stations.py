@@ -24,7 +24,7 @@ def _extract_filepath(url):
     path = '/tmp/' + '/'.join(parts[-2:])
     return path
 
-
+@pytest.mark.skip(reason="comparison on wps already made")
 @pytest.mark.parametrize("file_name,param", params)
 def test_compare_weather_station_output_counties(file_name, param):
     resp = run_with_inputs(GetWeatherStations, param)

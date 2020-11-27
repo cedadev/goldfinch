@@ -25,7 +25,7 @@ def _extract_filepath(url):
     path = '/tmp/' + '/'.join(parts[-2:])
     return path
 
-
+@pytest.mark.skip(reason="comparison on wps already made")
 @pytest.mark.parametrize("file_name,param", params)
 def test_compare_extract_station_data_td(file_name, param):
     data_inputs = f'obs_table=TD;{param}'
@@ -42,6 +42,7 @@ def test_compare_extract_station_data_td(file_name, param):
 
     assert file_content.equals(wps_file_content)
 
+@pytest.mark.skip(reason="comparison on wps already made")
 @pytest.mark.parametrize("file_name,param", params)
 def test_compare_extract_station_data_wd(file_name, param):
     data_inputs = f'obs_table=WD;{param}'
