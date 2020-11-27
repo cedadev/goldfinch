@@ -42,7 +42,7 @@ class ExtractUKStationData(Process):
             BoundingBoxInput('bbox', 'Bounding Box',
                          abstract='The spatial bounding box within which to search for station data.'
                                   ' This input will be ignored if counties are provided.',
-                         crss=['-12.0, 49.0, 3.0, 61.0,epsg:4326x'],
+                         crss=['-12.0, 49.0, 3.0, 61.0,epsg:4326'],
                          min_occurs=0,
                          max_occurs=1),
             # LiteralInput('bbox', 'Bounding Box',
