@@ -77,7 +77,7 @@ class GetWeatherStations(Process):
             metadata=[
                 Metadata('CEDA WPS UI', 'https://ceda-wps-ui.ceda.ac.uk'),
                 Metadata('Goldfinch WPS User Guide', 'https://goldfinch.readthedocs.io'),
-                Metadata('Disclaimer' 'https://help.ceda.ac.uk/article/4642-disclaimer')
+                Metadata('Disclaimer', 'https://help.ceda.ac.uk/article/4642-disclaimer')
             ],
             version='2.0.0',
             inputs=inputs,

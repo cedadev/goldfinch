@@ -116,7 +116,7 @@ class ExtractUKStationData(Process):
             metadata=[
                 Metadata('CEDA WPS UI', 'https://ceda-wps-ui.ceda.ac.uk'),
                 Metadata('CEDA WPS', 'https://ceda-wps.ceda.ac.uk'),
-                Metadata('Disclaimer' 'https://help.ceda.ac.uk/article/4642-disclaimer')
+                Metadata('Disclaimer', 'https://help.ceda.ac.uk/article/4642-disclaimer')
             ],
             version='2.0.0',
             inputs=inputs,
