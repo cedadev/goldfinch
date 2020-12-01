@@ -244,12 +244,12 @@ class ExtractUKStationData(Process):
 
         import pdb; pdb.set_trace()
 
-        if n_stations > STATION_LIMIT and inputs['chunk_rule'] == 'decadal':
+"""         if n_stations > STATION_LIMIT and inputs['chunk_rule'] == 'decadal':
 
             inputs['chunk_rule'] = 'year'
             raise Exception('The number of selected station IDs has been calculated to be '
                             'greater than {}. Please select a chunk size other than "decadal" '
-                            'for such a large volume of data.'.format(STATION_LIMIT))
+                            'for such a large volume of data.'.format(STATION_LIMIT)) """
 
         if n_years > 1 and n_stations > STATION_LIMIT:
             raise Exception('The number of selected station IDs has been calculated to be '
