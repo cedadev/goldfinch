@@ -240,7 +240,9 @@ class ExtractUKStationData(Process):
         n_stations = len(station_list)
         STATION_LIMIT = 100
 
-        n_years = int(inputs['start'][:4]) - int(inputs['end'][:4])
+        n_years =  int(inputs['end'][:4]) - int(inputs['start'][:4])
+
+        import pdb; pdb.set_trace()
 
         if n_stations > STATION_LIMIT and inputs['chunk_rule'] == 'decadal':
 
