@@ -23,7 +23,7 @@ class ExtractUKStationData(Process):
                                   ' a particular selection of weather observations.',
                          data_type='string',
                          allowed_values=TABLE_NAMES,
-                         min_occurs=0,
+                         min_occurs=1,
                          max_occurs=1),
             # LiteralInput('start', 'Start Date Time',
             #              abstract='The first date/time for which to search for operating weather stations.',
