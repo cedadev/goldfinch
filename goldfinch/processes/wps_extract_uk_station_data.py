@@ -238,7 +238,8 @@ class ExtractUKStationData(Process):
             Exception: [description]
         """
         n_stations = len(station_list)
-        STATION_LIMIT = 100
+        STATION_LIMIT = int(os.environ.get('MIDAS_STATION_LIMIT', '100'))
+        YEAR_LIMIT = int(os.environ.get('MIDAS_YEAR_LIMIT', '1'))
 
         n_years =  int(inputs['end'][:4]) - int(inputs['start'][:4])
 
@@ -249,7 +250,7 @@ class ExtractUKStationData(Process):
 #                            'greater than {}. Please select a chunk size other than "decadal" '
 #                            'for such a large volume of data.'.format(STATION_LIMIT))
 
-        if n_years > 1 and n_stations > STATION_LIMIT:
+        if n_years > YEAR_LIMIT and n_stations > STATION_LIMIT:
             raise Exception('The number of selected station IDs has been calculated to be '
                             'greater than {}. Please select a time window no longer than 1 '
                             'year.'.format(STATION_LIMIT))

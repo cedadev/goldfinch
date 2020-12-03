@@ -49,3 +49,9 @@ def midas_metadata():
     os.environ['MIDAS_METADATA_DIR'] = opj(mini_ceda_archive,
                                            midas_metadata_dir)
     return resp
+
+
+@pytest.fixture
+def size_limits():
+    os.environ['MIDAS_STATION_LIMIT'] = '10'
+    os.environ['MIDAS_YEAR_LIMIT'] = '1'
