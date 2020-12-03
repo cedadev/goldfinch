@@ -117,7 +117,7 @@ class ExtractUKStationData(Process):
             metadata=[
                 Metadata('CEDA WPS UI', 'https://ceda-wps-ui.ceda.ac.uk'),
                 Metadata('CEDA WPS', 'https://ceda-wps.ceda.ac.uk'),
-                Metadata('Disclaimer' 'https://help.ceda.ac.uk/article/4642-disclaimer')
+                Metadata('Disclaimer', 'https://help.ceda.ac.uk/article/4642-disclaimer')
             ],
             version='2.0.0',
             inputs=inputs,
@@ -242,16 +242,16 @@ class ExtractUKStationData(Process):
         STATION_LIMIT = int(os.environ.get('MIDAS_STATION_LIMIT', '100'))
         YEAR_LIMIT = int(os.environ.get('MIDAS_YEAR_LIMIT', '5'))
 
-        n_years = int(inputs['start'][:4]) - int(inputs['end'][:4])
+        n_years =  int(inputs['end'][:4]) - int(inputs['start'][:4])
 
-        if n_stations > STATION_LIMIT and inputs['chunk_rule'] == 'decadal':
+#        if n_stations > STATION_LIMIT and inputs['chunk_rule'] == 'decadal':
+#
+#            inputs['chunk_rule'] = 'year'
+#            raise Exception('The number of selected station IDs has been calculated to be '
+#                            'greater than {}. Please select a chunk size other than "decadal" '
+#                            'for such a large volume of data.'.format(STATION_LIMIT))
 
-            inputs['chunk_rule'] = 'year'
-            raise Exception('The number of selected station IDs has been calculated to be '
-                            'greater than {}. Please select a chunk size other than "decadal" '
-                            'for such a large volume of data.'.format(STATION_LIMIT))
-
-        if n_years > 1 and n_stations > STATION_LIMIT:
+        if n_years > YEAR_LIMIT and n_stations > STATION_LIMIT:
             raise Exception('The number of selected station IDs has been calculated to be '
                             'greater than {}. Please select a time window no longer than 1 '
                             'year.'.format(STATION_LIMIT))

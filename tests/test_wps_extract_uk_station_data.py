@@ -20,6 +20,11 @@ data_inputs = ['obs_table=TD;delimiter=tab;counties=DEVON;DateRange=2017-01-01/2
                    '/2018-01-31',
                'obs_table=TD;delimiter=tab;bbox=-5,-23,41,64;DateRange=2017-10-01/2018-01-31']
 
+large_inputs = ['obs_table=TD;delimiter=tab;counties=DEVON;DateRange=2017-01-01/2019-01-31',
+                'obs_table=TD;counties=DEVON;DateRange=2017-11-06/2019-01-15',
+                'obs_table=TD;bbox=0,4,50,55,urn:ogc:def:crs:EPSG:6.6:4326,2;DateRange=2017-10-01'
+                   '/2019-01-31']
+
 station_inputs = ['56810', '17101,1007', '1039,57199,1144']
 
 
@@ -61,6 +66,7 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
     assert_response_success(resp)
     output = get_output(resp.xml)
     input_list = ex_input.split(';')
+
 
     # added delimeter finder
     delimiter_dict = {
