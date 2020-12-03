@@ -1,3 +1,4 @@
+import os
 import os.path
 
 from pywps import Process, LiteralInput, ComplexOutput, BoundingBoxInput, FORMATS
@@ -238,7 +239,8 @@ class ExtractUKStationData(Process):
             Exception: [description]
         """
         n_stations = len(station_list)
-        STATION_LIMIT = 100
+        STATION_LIMIT = int(os.environ.get('MIDAS_STATION_LIMIT', '100'))
+        YEAR_LIMIT = int(os.environ.get('MIDAS_YEAR_LIMIT', '5'))
 
         n_years = int(inputs['start'][:4]) - int(inputs['end'][:4])
 

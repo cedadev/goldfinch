@@ -95,6 +95,14 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
     assert 'stations' in output
 
 
+@pytest.mark.xfail(reason='Jobs fail because the request is larger than the limits')
+@pytest.mark.parametrize('ex_input', large_inputs)
+def test_wps_extract_uk_station_data_failure(midas_metadata, midas_data, size_limits, ex_input):
+    resp = run_with_inputs(ExtractUKStationData, ex_input)
+
+    assert_response_success(resp)
+
+
 @pytest.mark.parametrize('station_ids', station_inputs)
 def test_wps_extract_uk_station_id_match_csv(midas_metadata, midas_data, station_ids):
     datainputs = f"obs_table=TD;station_ids={station_ids};DateRange=2017-01-01/2019-10-02"
