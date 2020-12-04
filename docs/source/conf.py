@@ -210,7 +210,7 @@ texinfo_documents = [
         "goldfinch Documentation",
         author,
         "goldfinch",
-        "A WPS which supports foltering and extraction of MIDAS data.",
+        "A WPS which supports filtering and extraction of MIDAS data.",
         "Miscellaneous",
     ),
 ]

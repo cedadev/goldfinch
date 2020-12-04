@@ -37,7 +37,7 @@ classifiers = [
 
 setup(name='goldfinch',
       version=about['__version__'],
-      description="A WPS which supports foltering and extraction of MIDAS data.",
+      description="A WPS which supports filtering and extraction of MIDAS data.",
       long_description=README + '\n\n' + CHANGES,
       long_description_content_type="text/x-rst",
       author=about['__author__'],
