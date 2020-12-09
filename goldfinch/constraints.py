@@ -4,51 +4,43 @@ validity of a request """
 from datetime import timedelta
 import dateutil.parser as dp
 import glob
+import numpy as np
 import os
+import scipy.integrate as integrate
+
+SIZE_LIMIT = 5 * 10^8
+
+TABLE_MODELS = {
+    'TD': lambda x: 330695*x + 17338156,
+    'WD': lambda x: 31789*x + 37823234,
+    'RH': lambda x: -1776*(x**3) + 184528*(x**2) - 1427575*x + 19656292,
+    'WM': lambda x: 4961883*x + 21431612,
+    'RO': lambda x: 4551794*np.exp(0.0558*x),
+    'RD': lambda x: 756422*x + 101165112,
+    'WH': lambda x: 22011601*(x**0.91),
+    'ST': lambda x: 3006720*np.exp(0.068*x)
+}
 
 def check_request_size(station_list, inputs):
-    year_sizes = get_year_sizes(inputs['obs_table'])
+    table = inputs['obs_table']
+
+    if dp.isoparse(inputs['end']) < dp.isoparse('1957') or table == 'RS':
+        return True
+
+    file_size_model = TABLE_MODELS[table]
+    start_converted = _convert_date(inputs['start'])
+    end_converted = _convert_date(inputs['end'])
+
+    size_estimate = integrate.quad(file_size_model, start_converted, end_converted)[0]
 
     n_stations = len(station_list)
-    dates = inputs['DateRange']
-    start_date = dp.isoparse(dates[0])
-    end_date = dp.isoparse(dates[1])
+    total_station_estimate = 1000 
 
-    # Something like this
-    # Sum of year sizes for date ranges (if half a year then half the size)
-    # Multiply by (selected stations / all stations)
-    # assert is smaller than a set ceiling.
+    return (n_stations / total_station_estimate) * size_estimate < SIZE_LIMIT
 
 
-def get_year_sizes(table_name):
-    year_sizes = {}
-
-    pattern = f"/badc/ukmo-midas/data/{table_name}/yearly_files/*"
-    year_files = glob.glob(pattern)
-
-    for year_path in year_files:
-        year = os.path.basename(year_path)[-10:-6]
-        year_sizes[year] = os.stat(year_path).st_size
-
-
-def get_year_proportions(start, end):
-    year_proportions = {}
-
-    start_year = start.year
-    end_year = end.year
-    year_diff = end_year - start_year
-
-    if year_diff != 0:
-        start_prop_delta = start - dp.isoparse(str((start + timedelta(days=360)).year))
-        start_prop = (-1 * start_prop_delta.days) / 365
-        year_proportions[start_year] = start_prop
-
-        end_prop_delta = dp.isoparse(str(end.year)) - end
-        end_prop = (-1 * end_prop_delta.days) / 365
-        year_proportions[end_year] = end_prop
-        
-    else:
-        prop_delta = end - start
-        prop = (-1 * prop_delta.days) / 365
-        year_proportions[start_year] = prop
-
+def _convert_date(date):
+    base = date.year - 1957
+    day_remainder_delta = date - dp.isoparse(str(date.year))
+    fractional = day_remainder_delta.days / 360
+    return base + fractional
