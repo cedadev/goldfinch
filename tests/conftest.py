@@ -53,5 +53,5 @@ def midas_metadata():
 
 @pytest.fixture
 def size_limits():
-    os.environ['MIDAS_STATION_LIMIT'] = '10'
-    os.environ['MIDAS_YEAR_LIMIT'] = '1'
+    os.environ['MIDAS_TEST_REQUEST_SIZE_LIMIT'] = '5000000' #5mb
+    os.environ['MIDAS_TEST_TOTAL_STATIONS'] = '100'
