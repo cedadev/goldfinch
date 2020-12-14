@@ -10,6 +10,7 @@ from goldfinch.util import (get_station_list, validate_inputs, locate_process_di
                             filter_obs_by_time_chunk, read_from_file,
                             WEATHER_STATIONS_FILE_NAME, DEFAULT_DATE_RANGE)
 
+from goldfinch.constraints import check_request_size
 
 import logging
 LOGGER = logging.getLogger("PYWPS")
@@ -155,7 +156,7 @@ class ExtractUKStationData(Process):
         self.response.update_status('Extracted station ID list.', 5)
 
         # Check request size against limits
-        self._check_request_size(station_list, inputs)
+        check_request_size(station_list, inputs)
 
         # Define data file base
         prefix = 'station_data'
@@ -226,39 +227,6 @@ class ExtractUKStationData(Process):
             fout.write("\r\n".join([str(station) for station in station_list]))
 
         self.response.outputs['stations'].file = stations_file_path
-
-    def _check_request_size(self, station_list, inputs):
-        """Checks the size of the request against allowed limits.
-
-        Args:
-            inputs ([type]): [description]
-
-        Raises:
-            Exception: [description]
-            Exception: [description]
-            Exception: [description]
-        """
-        n_stations = len(station_list)
-        STATION_LIMIT = int(os.environ.get('MIDAS_STATION_LIMIT', '100'))
-        YEAR_LIMIT = int(os.environ.get('MIDAS_YEAR_LIMIT', '5'))
-
-        n_years =  int(inputs['end'][:4]) - int(inputs['start'][:4])
-
-#        if n_stations > STATION_LIMIT and inputs['chunk_rule'] == 'decadal':
-#
-#            inputs['chunk_rule'] = 'year'
-#            raise Exception('The number of selected station IDs has been calculated to be '
-#                            'greater than {}. Please select a chunk size other than "decadal" '
-#                            'for such a large volume of data.'.format(STATION_LIMIT))
-
-        if n_years > YEAR_LIMIT and n_stations > STATION_LIMIT:
-            raise Exception('The number of selected station IDs has been calculated to be '
-                            'greater than {}. Please select a time window no longer than 1 '
-                            'year.'.format(STATION_LIMIT))
-
-        if n_stations == 0:
-            raise Exception('No weather stations have been found for this request. Please '
-                            'modify your request and try again.')
 
     def _write_doc_links_file(self, doc_links_file, obs_table):
         "Write documentation links file."

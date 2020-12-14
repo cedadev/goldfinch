@@ -10,7 +10,7 @@
             "project_slug": "goldfinch",
             "project_repo_name": "goldfinch",
             "project_readthedocs_name": "goldfinch",
-            "project_short_description": "A WPS which supports foltering and extraction of MIDAS data.",
+            "project_short_description": "A WPS which supports filtering and extraction of MIDAS data.",
             "version": "0.1.0",
             "open_source_license": "BSD license",
             "http_port": "5000",
