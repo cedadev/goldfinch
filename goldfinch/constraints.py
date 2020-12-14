@@ -28,6 +28,11 @@ def check_request_size(station_list, inputs):
     TOTAL_STATION_ESTIMATE = int(os.environ.get('MIDAS_TEST_TOTAL_STATIONS', '1000'))
 
     table = inputs['obs_table']
+    n_stations = len(station_list)
+
+    if n_stations == 0:
+        raise Exception('No stations were found for your given input. Please increase '
+                        'your search area or date range.')
 
     if dp.isoparse(inputs['end']) < dp.isoparse('1957') or table == 'RS':
         return
@@ -54,8 +59,6 @@ def check_request_size(station_list, inputs):
         size_estimate = linear_size_estimate + static_size_estimate
     else:
         size_estimate = integrate.quad(file_size_model, start_converted, end_converted)[0]
-
-    n_stations = len(station_list) 
 
     if (n_stations / TOTAL_STATION_ESTIMATE) * size_estimate > SIZE_LIMIT:
         raise Exception('The estimated amount of data you have selected is too large. '
