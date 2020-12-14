@@ -9,5 +9,6 @@ dependencies:
 - jinja2
 - click
 - psutil
+- scipy
 # tests
 - pytest

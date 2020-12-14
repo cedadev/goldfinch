@@ -23,6 +23,7 @@ TABLE_MODELS = {
     'ST': lambda x: 2303563*x
 }
 
+
 def check_request_size(station_list, inputs):
     SIZE_LIMIT = int(os.environ.get('MIDAS_TEST_REQUEST_SIZE_LIMIT', '500000000')) #5*10^8, 500mb
     TOTAL_STATION_ESTIMATE = int(os.environ.get('MIDAS_TEST_TOTAL_STATIONS', '1000'))
