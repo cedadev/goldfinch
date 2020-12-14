@@ -1,3 +1,4 @@
+import os
 import os.path
 
 from pywps import Process, LiteralInput, ComplexOutput, BoundingBoxInput, FORMATS

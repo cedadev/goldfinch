@@ -101,7 +101,7 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
     assert 'stations' in output
 
 
-@pytest.mark.xfail()
+@pytest.mark.xfail(reason='Jobs fail because the request is larger than the limits')
 @pytest.mark.parametrize('ex_input', large_inputs)
 def test_wps_extract_uk_station_data_failure(midas_metadata, midas_data, size_limits, ex_input):
     resp = run_with_inputs(ExtractUKStationData, ex_input)
