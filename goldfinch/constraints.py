@@ -63,7 +63,7 @@ def check_request_size(station_list, inputs):
 
     ratio = (n_stations / TOTAL_STATION_ESTIMATE)
     if ratio > 1 :
-	ratio = 1
+        ratio = 1
 
     if ratio * size_estimate > SIZE_LIMIT:
         raise Exception('The estimated amount of data you have selected is too large. '
