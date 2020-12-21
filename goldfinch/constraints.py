@@ -26,7 +26,7 @@ TABLE_MODELS = {
 
 def check_request_size(station_list, inputs):
     SIZE_LIMIT = int(os.environ.get('MIDAS_TEST_REQUEST_SIZE_LIMIT', '500000000')) #5*10^8, 500mb
-    TOTAL_STATION_ESTIMATE = int(os.environ.get('MIDAS_TEST_TOTAL_STATIONS', '1000'))
+    TOTAL_STATION_ESTIMATE = int(os.environ.get('MIDAS_TEST_TOTAL_STATIONS', '10000'))
 
     table = inputs['obs_table']
     n_stations = len(station_list)
@@ -61,7 +61,11 @@ def check_request_size(station_list, inputs):
     else:
         size_estimate = integrate.quad(file_size_model, start_converted, end_converted)[0]
 
-    if (n_stations / TOTAL_STATION_ESTIMATE) * size_estimate > SIZE_LIMIT:
+    ratio = (n_stations / TOTAL_STATION_ESTIMATE)
+    if ratio > 1 :
+        ratio = 1
+
+    if ratio * size_estimate > SIZE_LIMIT:
         raise Exception('The estimated amount of data you have selected is too large. '
                         'Please select less stations or a smaller time range.')
 
