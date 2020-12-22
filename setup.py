@@ -49,7 +49,10 @@ setup(name='goldfinch',
       keywords='wps pywps birdhouse goldfinch',
       packages=find_packages(),
       include_package_data=True,
-      install_requires=reqs,
+      install_requires=[
+          reqs,
+          "pywps @ git+https://github.com/geopython/pywps.git@pywps-4.2"
+          ],
       extras_require={
           "dev": dev_reqs,              # pip install ".[dev]"
       },
