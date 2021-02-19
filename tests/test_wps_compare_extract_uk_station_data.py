@@ -25,6 +25,7 @@ def _extract_filepath(url):
     path = '/tmp/' + '/'.join(parts[-2:])
     return path
 
+
 @pytest.mark.skip(reason="comparison on wps already made")
 @pytest.mark.parametrize("file_name,param", params)
 def test_compare_extract_station_data_td(file_name, param):
@@ -41,6 +42,7 @@ def test_compare_extract_station_data_td(file_name, param):
                                                     'extract_data', f'{file_name}TD.csv'))
 
     assert file_content.equals(wps_file_content)
+
 
 @pytest.mark.skip(reason="comparison on wps already made")
 @pytest.mark.parametrize("file_name,param", params)
@@ -61,6 +63,7 @@ def test_compare_extract_station_data_wd(file_name, param):
 
     assert file_content.equals(wps_file_content)
 
+
 @pytest.mark.skip(reason="comparison on wps already made")
 def test_compare_extract_station_data_bbox_td():
     data_inputs = f'obs_table=TD;DateRange=2015-01-01/2015-01-03;bbox=-3,52,1.25,54.5'
@@ -76,6 +79,7 @@ def test_compare_extract_station_data_bbox_td():
 
     assert file_content.equals(wps_file_content)
 
+
 @pytest.mark.skip(reason="comparison on wps already made")
 def test_compare_extract_station_data_one_station_td():
     data_inputs = f'obs_table=TD;DateRange=2014-01-01/2015-01-01;station_ids=605'
@@ -90,3 +94,4 @@ def test_compare_extract_station_data_one_station_td():
     wps_file_content = pandas.read_csv(os.path.join(current_dir, '605TD.csv'))
 
     assert file_content.equals(wps_file_content)
+
