@@ -7,7 +7,7 @@ from pywps.app.Common import Metadata
 
 from midas_extract.vocabs import DATA_TYPES, UK_COUNTIES
 from goldfinch.util import (get_station_list, validate_inputs, 
-    WEATHER_STATIONS_FILE_NAME, DEFAULT_DATE_RANGE)
+    WEATHER_STATIONS_FILE_NAME, get_default_date_range)
 
 import logging
 LOGGER = logging.getLogger("PYWPS")
@@ -28,7 +28,7 @@ class GetWeatherStations(Process):
             LiteralInput('DateRange', 'Date Range',
                           abstract='The date range to search for operating weather stations.',
                           data_type='string',
-                          default=DEFAULT_DATE_RANGE,
+                          default=get_default_date_range(),
                           min_occurs=0,
                           max_occurs=1),
             BoundingBoxInput('bbox', 'Bounding Box',
@@ -91,7 +91,7 @@ class GetWeatherStations(Process):
         response.update_status('Job is now running', 0)
 
         inputs = validate_inputs(request.inputs, 
-            defaults={'DateRange': DEFAULT_DATE_RANGE})
+            defaults={'DateRange': get_default_date_range()})
 
         # Add output file
         stations_file = os.path.join(self.workdir, WEATHER_STATIONS_FILE_NAME)

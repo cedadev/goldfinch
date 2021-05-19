@@ -8,7 +8,7 @@ from midas_extract.vocabs import TABLE_NAMES, MIDAS_CATALOGUE_DICT, UK_COUNTIES
 
 from goldfinch.util import (get_station_list, validate_inputs, locate_process_dir,
                             filter_obs_by_time_chunk, read_from_file,
-                            WEATHER_STATIONS_FILE_NAME, DEFAULT_DATE_RANGE)
+                            WEATHER_STATIONS_FILE_NAME, get_default_date_range)
 
 from goldfinch.constraints import check_request_size
 
@@ -38,7 +38,7 @@ class ExtractUKStationData(Process):
             LiteralInput('DateRange', 'Date Range',
                          abstract='The date range to search for station data.',
                          data_type='string',
-                         default=DEFAULT_DATE_RANGE,
+                         default=get_default_date_range(),
                          min_occurs=0,
                          max_occurs=1),
             BoundingBoxInput('bbox', 'Bounding Box',

@@ -1,4 +1,5 @@
 import copy
+import os
 
 from pywps.app.exceptions import ProcessError
 
@@ -10,9 +11,31 @@ from midas_extract.vocabs import UK_COUNTIES
 
 
 WEATHER_STATIONS_FILE_NAME = 'weather_stations.txt'
-DEFAULT_DATE_RANGE = '1850-01-01/2020-10-31'
+START_DATE = "1850-01-01"
+DEFAULT_DATE_RANGE = None
+#'1850-01-01/2021-04-30'
+MIDAS_RD_DATA_DIR = "/badc/ukmo-midas/data/RD/yearly_files"
 
 
+def get_default_date_range():
+    global DEFAULT_DATE_RANGE
+
+    if not DEFAULT_DATE_RANGE:
+        try:
+            data_file = os.path.join(MIDAS_RD_DATA_DIR, sorted(os.listdir(MIDAS_RD_DATA_DIR))[-1])
+ 
+            # Read last record from file to get latest valid data date
+            with open(data_file) as reader:
+                 data = reader.readlines()[-1]
+
+            last_date = data.split(',')[2].strip().split()[0]
+            DEFAULT_DATE_RANGE = f"{START_DATE}/{last_date}"
+        except:
+            DEFAULT_DATE_RANGE = "1850-01-01/2021-03-31"
+
+    return DEFAULT_DATE_RANGE 
+
+            
 def translate_bbox(wps_bbox):
     """
     Converts bbox definition in WPS to bbox definition in MIDAS code:
