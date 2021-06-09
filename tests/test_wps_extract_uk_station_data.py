@@ -34,7 +34,7 @@ def _extract_filepath(url):
     return path
 
 
-def test_wps_extract_uk_station_data_no_params_fail(midas_metadata, midas_data):
+def test_wps_extract_uk_station_data_no_params_fail(load_test_data):
     datainputs = ""
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
@@ -44,14 +44,14 @@ def test_wps_extract_uk_station_data_no_params_fail(midas_metadata, midas_data):
 # TODO: work out how to raise an exception in the code that gets put in the
 #       Exception Report returned by the server
 @pytest.mark.skip
-def test_wps_extract_uk_station_data_no_table_fail(midas_metadata, midas_data):
+def test_wps_extract_uk_station_data_no_table_fail(load_test_data):
     datainputs = "counties=DEVON;DateRange=2017-10-01/2018-01-31"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
     assert "please provide: ['obs_table']" in resp.response[0].decode('utf-8')
 
 
-def test_wps_extract_uk_station_data_empty_bbox_fail(midas_metadata, midas_data):
+def test_wps_extract_uk_station_data_empty_bbox_fail(load_test_data):
     datainputs = "obs_table=TD;bbox=0,0,10,10,urn:ogc:def:crs:EPSG:6.6:4326,2;DateRange=2017-10-01/" \
                  "2018-01-31"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
@@ -60,7 +60,7 @@ def test_wps_extract_uk_station_data_empty_bbox_fail(midas_metadata, midas_data)
 
 
 @pytest.mark.parametrize('ex_input', data_inputs)
-def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_input):
+def test_wps_extract_uk_station_data_success(load_test_data, ex_input):
     resp = run_with_inputs(ExtractUKStationData, ex_input)
 
     assert_response_success(resp)
@@ -103,14 +103,14 @@ def test_wps_extract_uk_station_data_success(midas_metadata, midas_data, ex_inpu
 
 @pytest.mark.xfail(reason='Jobs fail because the request is larger than the limits')
 @pytest.mark.parametrize('ex_input', large_inputs)
-def test_wps_extract_uk_station_data_failure(midas_metadata, midas_data, size_limits, ex_input):
+def test_wps_extract_uk_station_data_failure(load_test_data, size_limits, ex_input):
     resp = run_with_inputs(ExtractUKStationData, ex_input)
 
     assert_response_success(resp)
 
 
 @pytest.mark.parametrize('station_ids', station_inputs)
-def test_wps_extract_uk_station_id_match_csv(midas_metadata, midas_data, station_ids):
+def test_wps_extract_uk_station_id_match_csv(load_test_data, station_ids):
     datainputs = f"obs_table=TD;station_ids={station_ids};DateRange=2017-01-01/2019-10-02"
     resp = run_with_inputs(ExtractUKStationData, datainputs)
 
@@ -128,3 +128,5 @@ def test_wps_extract_uk_station_id_match_csv(midas_metadata, midas_data, station
     assert 'output' in output
     assert 'stations' in output
     assert 'doc_links_file' in output
+
+

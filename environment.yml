@@ -5,10 +5,10 @@ channels:
 dependencies:
 - pip
 - python>=3.6,<3.8
-- pywps>=4.2.4,<4.3
 - jinja2
 - click
 - psutil
 - scipy
+- werkzeug=1.0.0
 # tests
 - pytest

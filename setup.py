@@ -51,7 +51,6 @@ setup(name='goldfinch',
       include_package_data=True,
       install_requires=[
           reqs,
-          "pywps @ git+https://github.com/geopython/pywps.git@pywps-4.2"
           ],
       extras_require={
           "dev": dev_reqs,              # pip install ".[dev]"

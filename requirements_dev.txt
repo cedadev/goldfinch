@@ -1,3 +1,4 @@
+gitpython
 pytest>=6.0
 flake8
 pytest-flake8
