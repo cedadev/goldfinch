@@ -8,7 +8,7 @@ from midas_extract.vocabs import TABLE_NAMES, MIDAS_CATALOGUE_DICT, UK_COUNTIES
 
 from goldfinch.util import (get_station_list, validate_inputs, locate_process_dir,
                             filter_obs_by_time_chunk, read_from_file,
-                            WEATHER_STATIONS_FILE_NAME, get_default_date_range)
+                            WEATHER_STATIONS_FILE_NAME, get_valid_date_range)
 
 from goldfinch.constraints import check_request_size
 
@@ -27,18 +27,10 @@ class ExtractUKStationData(Process):
                          allowed_values=TABLE_NAMES,
                          min_occurs=1,
                          max_occurs=1),
-            # LiteralInput('start', 'Start Date Time',
-            #              abstract='The first date/time for which to search for operating weather stations.',
-            #              data_type='dateTime',
-            #              default='2017-10-01T12:00:00Z'),
-            # LiteralInput('end', 'End Date Time',
-            #              abstract='The last date/time for which to search for operating weather stations.',
-            #              data_type='dateTime',
-            #              default='2018-02-25T12:00:00Z'),
             LiteralInput('DateRange', 'Date Range',
                          abstract='The date range to search for station data.',
                          data_type='string',
-                         default=get_default_date_range(),
+                         default=get_valid_date_range(),
                          min_occurs=0,
                          max_occurs=1),
             BoundingBoxInput('bbox', 'Bounding Box',
@@ -47,13 +39,6 @@ class ExtractUKStationData(Process):
                          crss=['-12.0, 49.0, 3.0, 61.0,epsg:4326'],
                          min_occurs=0,
                          max_occurs=1),
-            # LiteralInput('bbox', 'Bounding Box',
-            #              abstract='The spatial bounding box within which to search for weather stations.'
-            #              ' This input will be ignored if counties are provided.'
-            #              ' Provide the bounding box as: "W,S,E,N".',
-            #              data_type='string',
-            #              min_occurs=0,
-            #              max_occurs=1),
             LiteralInput('counties', 'Counties',
                          abstract='A list of counties within which to search for weather stations.',
                          data_type='string',
@@ -71,12 +56,6 @@ class ExtractUKStationData(Process):
                          data_type='string',
                          min_occurs=0,
                          max_occurs=1),
-            # LiteralInput('chunk_rule', 'Chunk Rule for Outputs',
-            #              abstract='The period of time spanned by each output file.',
-            #              data_type='string',
-            #              allowed_values=['decade', 'year', 'month'],
-            #              default='year',
-            #              min_occurs=0),
             LiteralInput('delimiter', 'Delimiter',
                          abstract='The delimiter to be used in the output files.',
                          data_type='string',

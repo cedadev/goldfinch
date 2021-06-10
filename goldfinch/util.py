@@ -1,5 +1,7 @@
 import copy
 import os
+from datetime import datetime, timedelta
+import calendar
 
 from pywps.app.exceptions import ProcessError
 
@@ -12,28 +14,19 @@ from midas_extract.vocabs import UK_COUNTIES
 
 WEATHER_STATIONS_FILE_NAME = 'weather_stations.txt'
 START_DATE = "1850-01-01"
-DEFAULT_DATE_RANGE = None
-#'1850-01-01/2021-04-30'
-MIDAS_RD_DATA_DIR = "/badc/ukmo-midas/data/RD/yearly_files"
 
 
-def get_default_date_range():
-    global DEFAULT_DATE_RANGE
+def get_valid_date_range():
+    """
+    Based on day in month, returns a valid date range to select from.
+    Subtracts 37 days from the current date to get the most recent 
+    avaiable month.
+    """ 
+    ref_date = (datetime.now() - timedelta(days=37))
+    last_day = calendar.monthrange(ref_date.year, ref_date.month)[-1]
+    end_date = f"{ref_date.year:04d}-{ref_date.month:02d}-{last_day:02d}"
 
-    if not DEFAULT_DATE_RANGE:
-        try:
-            data_file = os.path.join(MIDAS_RD_DATA_DIR, sorted(os.listdir(MIDAS_RD_DATA_DIR))[-1])
- 
-            # Read last record from file to get latest valid data date
-            with open(data_file) as reader:
-                 data = reader.readlines()[-1]
-
-            last_date = data.split(',')[2].strip().split()[0]
-            DEFAULT_DATE_RANGE = f"{START_DATE}/{last_date}"
-        except:
-            DEFAULT_DATE_RANGE = "1850-01-01/2021-03-31"
-
-    return DEFAULT_DATE_RANGE 
+    return f"{START_DATE}/{end_date}"
 
             
 def translate_bbox(wps_bbox):
