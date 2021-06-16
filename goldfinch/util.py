@@ -210,11 +210,17 @@ def validate_inputs(inputs, defaults=None, required=None):
         resp['delimiter'] = inputs['delimiter'][0].data
 
     # Fix datetimes
+    # Determine key first, either "DateRange" or "TemporalRange"
     if 'DateRange' in inputs:
-        resp['start'], resp['end'] = inputs['DateRange'][0].data.split('/')
+        resp['start'], resp['end'] = [revert_datetime_to_long_string(dt) for dt in 
+                                      inputs['DateRange'][0].data.split('/')]
 
-        for dt in ('start', 'end'):
-            resp[dt] = revert_datetime_to_long_string(resp[dt])
+    if 'TemporalRange' in inputs:
+        resp['start'], resp['end'] = [revert_datetime_to_long_string(dt) for dt in
+                                      inputs['TemporalRange'][0].data.split('/')]
+
+#        for dt in ('start', 'end'):
+#            resp[dt] = revert_datetime_to_long_string(resp[dt])
 
     # Add default values for those inputs not set
     for key, value in defaults.items():

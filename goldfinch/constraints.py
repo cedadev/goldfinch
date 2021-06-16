@@ -44,25 +44,29 @@ def check_request_size(station_list, inputs):
 
     adjusted_2020 = 2020 - 1957
     if start_converted < 0:
-        """ If the date range begins before 1957, ignore the data before 1957.
-        In many cases, the Y intercept of the model is 0 therefore, integrating in the
-        negative X will add a negative value to result. """
-        start_converted = 0;
+        # If the date range begins before 1957, ignore the data before 1957.
+        # In many cases, the Y intercept of the model is 0 therefore, integrating in the
+        # negative X will add a negative value to result
+        start_converted = 0
 
     if end_converted > adjusted_2020:
-        """ These models were created on data from 1957 - 2020.
-        In the interest of future proofing, files beyond 2020 will be modeled to 
-        have the same size as 2020 was"""
+        # These models were created on data from 1957 - 2020.
+        # In the interest of future proofing, files beyond 2020 will be modeled to 
+        # have the same size as 2020 was
+
         linear_size_estimate = integrate.quad(file_size_model, start_converted, adjusted_2020)[0]
         static_y = file_size_model(adjusted_2020)
         remainder = end_converted - adjusted_2020
+
         static_size_estimate = static_y * remainder # Equivalent to integrating y = <static_y>
         size_estimate = linear_size_estimate + static_size_estimate
+
     else:
+
         size_estimate = integrate.quad(file_size_model, start_converted, end_converted)[0]
 
     ratio = (n_stations / TOTAL_STATION_ESTIMATE)
-    if ratio > 1 :
+    if ratio > 1:
         ratio = 1
 
     if ratio * size_estimate > SIZE_LIMIT:
@@ -73,5 +77,6 @@ def check_request_size(station_list, inputs):
 def _convert_date(date):
     base = date.year - 1957
     day_remainder_delta = date - dp.isoparse(str(date.year))
+
     fractional = day_remainder_delta.days / 360
     return base + fractional
