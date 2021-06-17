@@ -84,9 +84,13 @@ class ExtractUKStationDataWithDateInput(Process):
             self._handler,
             identifier='ExtractUKStationDataWithDateInput',
             title='Extract UK Station Data With Date Input',
-            abstract='The Extract UK Station Data process provides tools to'
+            abstract='The Extract UK Station Data With Date Input process provides tools to'
                      ' access surface station weather observations for a range'
                      ' of variables throughout the UK.'
+                     ' This process is identical to the Extract UK Station Data process'
+                     ' but the date range inputs are presented as a simple string'
+                     ' rather than a range selector. This makes it easier to pick an'
+                     ' exact start and end date.' 
                      ' These include temperature, rainfall and wind measurements.'
                      ' These records are available from 1859 to this year.'
                      ' You can select which stations you require using'
